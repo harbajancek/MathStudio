@@ -35,6 +35,30 @@ namespace MathGraphWpf
         public string Domain { get; set; }
         public decimal? Asymptote { get; set; } = null;
 
+        public TestFunctionClass(string expression)
+        {
+            var context = new FunctionContext();
+            var tokenizer = new Tokenizer(new StringReader(expression));
+            var parser = new Parser(tokenizer);
+            var nodeExpression = parser.ParseExpression();
+
+            // test
+            for (decimal i = 0; i < 2; i++)
+            {
+                context.Variable = i;
+                try
+                {
+                    _ = nodeExpression.Eval(context);
+                }
+                catch (DivideByZeroException)
+                {
+
+                }
+            }
+
+            expressionString = expression;
+        }
+
         public IEnumerable<PointCollection> GetGraphs(decimal xmax, decimal ymax, decimal xmin, decimal ymin, decimal dx)
         {
             if (xmaxCache == xmax
@@ -81,6 +105,10 @@ namespace MathGraphWpf
                     decimal y = (currentPoint.Y > 0) ? ymax : ymin;
                     currentPoint = new Point(currentPoint.X, (double)y);
                     wrong = true;
+                }
+                catch (Exception e)
+                {
+                    throw e;
                 }
 
                 if (result > ymax || result < ymin)

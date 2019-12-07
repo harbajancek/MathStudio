@@ -13,6 +13,8 @@ namespace MathExpressionEvaluator
         OpenParenthesis,
         CloseParenthesis,
         Identifier,
-        Comma
+        Comma,
+        Raise,
+        AbsoluteParenthesis
     }
 }

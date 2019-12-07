@@ -43,6 +43,8 @@ namespace MathExpressionEvaluator
                 '(' => Token.OpenParenthesis,
                 ')' => Token.CloseParenthesis,
                 ',' => Token.Comma,
+                '^' => Token.Raise,
+                '|' => Token.AbsoluteParenthesis,
                 _ when char.IsDigit(CurrentChar) => Token.Number,
                 _ when char.IsLetter(CurrentChar) => Token.Identifier,
                 _ => throw new InvalidDataException($"Unexpected character: {CurrentChar}")

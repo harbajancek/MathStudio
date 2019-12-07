@@ -28,7 +28,8 @@ namespace MathGraphWpf
         {
             Brushes.Red,
             Brushes.Blue,
-            Brushes.Green
+            Brushes.Green,
+            Brushes.Purple,
         };
         private int brushesIndex = 0;
 
@@ -44,6 +45,19 @@ namespace MathGraphWpf
         private double wymax { get; set; }
         private double wxmin { get; set; }
         private double wymin { get; set; }
+        private bool disableGrid;
+        public bool DisableGrid
+        {
+            get
+            {
+                return disableGrid;
+            }
+            set
+            {
+                disableGrid = value;
+                PrepareGraph();
+            }
+        }
 
         TestFunctionClassViewModel Tests { get; set; }
         public MainWindow()
@@ -51,6 +65,7 @@ namespace MathGraphWpf
             InitializeComponent();
             Tests = new TestFunctionClassViewModel();
             ExpressionsList.DataContext = Tests;
+            DisableGridCheckBox.DataContext = this;
         }
 
         // Prepare values for perform transformations.
@@ -92,18 +107,32 @@ namespace MathGraphWpf
 
         private void Add_ButtonClick(object sender, RoutedEventArgs e)
         {
-            Tests.TestFunctions.Add(new TestFunctionClass()
+            try
             {
-                ExpressionString = ExpressionInput.Text,
-                Domain = "null",
-                Range = "null"
-            });
+                Tests.TestFunctions.Add(new TestFunctionClass(ExpressionInput.Text)
+                {
+                    Domain = "null",
+                    Range = "null"
+                });
+            }
+            catch (Exception er)
+            {
+                ErrorMessage.Text = er.Message;
+                ErrorMessage.Visibility = Visibility.Visible;
+                return;
+            }
+
+            ErrorMessage.Visibility = Visibility.Hidden;
 
             DisplayGraphs();
         }
 
         public void DisplayGraphBase()
         {
+            if (disableGrid)
+            {
+                return;
+            }
             Polyline pl;
             PointCollection points;
 
@@ -215,6 +244,7 @@ namespace MathGraphWpf
             {
                 pointCollections.AddRange(item.GetGraphs((decimal)wxmax + 10, (decimal)wymax + 10, (decimal)wxmin - 10, (decimal)wymin - 10, (decimal)dx));
             }
+
             brushesIndex = 0;
             foreach (var points in pointCollections)
             {
@@ -249,7 +279,7 @@ namespace MathGraphWpf
             {
                 Stroke = Brushes.Black,
                 Tag = "funPolGraph",
-                StrokeThickness = 1
+                StrokeThickness = 40
             };
         }
 
@@ -298,6 +328,11 @@ namespace MathGraphWpf
             {
                 PrepareGraph();
             }
+        }
+
+        private void ShowGrid_CheckBoxClick(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void Clear_ButtonClick(object sender, RoutedEventArgs e)

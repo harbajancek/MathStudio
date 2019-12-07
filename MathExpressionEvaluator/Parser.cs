@@ -7,6 +7,7 @@ namespace MathExpressionEvaluator
     public class Parser
     {
         private Tokenizer Tokenizer { get; }
+        private bool isAbsolute = false;
         public Parser(Tokenizer tokenizer)
         {
             Tokenizer = tokenizer;
@@ -51,7 +52,7 @@ namespace MathExpressionEvaluator
 
             while (true)
             {
-                if (Tokenizer.Token != Token.Multiply && Tokenizer.Token != Token.Divide)
+                if (Tokenizer.Token != Token.Multiply && Tokenizer.Token != Token.Divide && Tokenizer.Token != Token.Raise)
                 {
                     return left;
                 }
@@ -108,6 +109,23 @@ namespace MathExpressionEvaluator
 
                 Tokenizer.NextToken();
                 return node;
+            }
+            else if (Tokenizer.Token == Token.AbsoluteParenthesis)
+            {
+                Tokenizer.NextToken();
+
+                isAbsolute = true;
+
+                var node = parseAddSubtract();
+
+                if (Tokenizer.Token != Token.AbsoluteParenthesis)
+                {
+                    throw new Exception("Missing closing absolute parenthesis");
+                }
+
+                Tokenizer.NextToken();
+                return new NodeAbsolute(node);
+                
             }
             else if (Tokenizer.Token == Token.Identifier)
             {
@@ -169,6 +187,7 @@ namespace MathExpressionEvaluator
                 }
                 return a / b;
             },
+            Token.Raise => (a,b) => (decimal)Math.Pow((double)a,(double)b),
             _ => null
         };
     }
