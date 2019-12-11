@@ -124,7 +124,7 @@ namespace MathGraphWpf
 
             ErrorMessage.Visibility = Visibility.Hidden;
 
-            DisplayGraphs();
+            PrepareGraph();
         }
 
         public void DisplayGraphBase()
@@ -310,6 +310,38 @@ namespace MathGraphWpf
 
             DisplayGraphBase();
             DisplayGraphs();
+
+            List<Polyline> functions = new List<Polyline>();
+
+            foreach (var item in Graph.Children)
+            {
+                if (item is Polyline)
+                {
+                    Polyline pl = (Polyline)item;
+                    if (pl.Tag is string && (string)pl.Tag == "funPolGraph")
+                    {
+                        functions.Add(pl);
+                    }
+                }
+            }
+
+            List<Point> interPoints;
+
+            if (functions.Count == 2)
+            {
+                interPoints = new List<Point>(GetIntersectionPoints(functions[0].Points, functions[1].Points));
+                foreach (var point in interPoints)
+                {
+                    Ellipse ellipse = new Ellipse()
+                    {
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 2,
+                        Width = 2,
+                        Height = 2,
+                    };
+                    Graph.Children.Add(ellipse);
+                }
+            }
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -339,6 +371,10 @@ namespace MathGraphWpf
         {
             Tests.TestFunctions.Clear();
             DisplayGraphs();
+        }
+        public static IEnumerable<Point> GetIntersectionPoints(PointCollection points1, PointCollection points2)
+        {
+            return points1.Intersect(points2);
         }
     }
 }
