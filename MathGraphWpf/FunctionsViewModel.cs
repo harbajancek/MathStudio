@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace MathGraphWpf
+namespace MathStudioWpf
 {
     class FunctionsViewModel
     {
-        public ObservableCollection<FunctionModel> TestFunctions { get; set; } = new ObservableCollection<FunctionModel>();
+        public ObservableCollection<IGraphable> TestFunctions { get; set; } = new ObservableCollection<IGraphable>();
     }
 }

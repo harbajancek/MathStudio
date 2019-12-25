@@ -9,9 +9,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace MathGraphWpf
+namespace MathStudioWpf
 {
-    class FunctionModel : INotifyPropertyChanged
+    class FunctionModel : INotifyPropertyChanged, IGraphable
     {
         private string expressionString;
         private bool isGraphable;
@@ -66,9 +66,6 @@ namespace MathGraphWpf
                 NotifyPropertyChanged();
             }
         }
-        public string Range { get; set; }
-        public string Domain { get; set; }
-        public decimal? Asymptote { get; set; } = null;
         public Brush Color { get; set; }
 
 
@@ -77,7 +74,7 @@ namespace MathGraphWpf
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public IEnumerable<PointCollection> GetGraphs(decimal xmax, decimal ymax, decimal xmin, decimal ymin, decimal dx)
+        public IEnumerable<PointCollection> GetGraphPoints(decimal xmax, decimal ymax, decimal xmin, decimal ymin, decimal dx)
         {
             List<PointCollection> pointCollections = new List<PointCollection>();
             PointCollection points = new PointCollection();

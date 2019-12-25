@@ -1,5 +1,4 @@
-﻿using MathExpressionEvaluator;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MathGraphWpf
+namespace MathStudioWpf
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -335,7 +334,7 @@ namespace MathGraphWpf
             {
                 if (function.IsGraphable)
                 {
-                    List<PointCollection> pointCollections = new List<PointCollection>(function.GetGraphs((decimal)wxmax + 10, (decimal)wymax + 10, (decimal)wxmin - 10, (decimal)wymin - 10, (decimal)dx));
+                    List<PointCollection> pointCollections = new List<PointCollection>(function.GetGraphPoints((decimal)wxmax + 10, (decimal)wymax + 10, (decimal)wxmin - 10, (decimal)wymin - 10, (decimal)dx));
                     foreach (var points in pointCollections)
                     {
                         DrawPolyline(points, function.Color);
