@@ -70,12 +70,12 @@ namespace MathGraphWpf
             }
         }
 
-        TestFunctionClassViewModel Tests { get; set; }
+        FunctionsViewModel Tests { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             mouseDeltaText.Text = mouseDelta.ToString();
-            Tests = new TestFunctionClassViewModel();
+            Tests = new FunctionsViewModel();
             ExpressionsList.DataContext = Tests;
             DisableGridCheckBox.DataContext = this;
         }
@@ -119,7 +119,7 @@ namespace MathGraphWpf
 
         private void Add_ButtonClick(object sender, RoutedEventArgs e)
         {
-            TestFunctionClass function = new TestFunctionClass();
+            FunctionModel function = new FunctionModel();
             function.Color = brushes[brushesIndex];
             brushesIndex++;
             if (brushesIndex >= brushes.Count)
@@ -472,7 +472,7 @@ namespace MathGraphWpf
         private void RemoveItem_ButtonClick(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            TestFunctionClass function = (TestFunctionClass)button.DataContext;
+            FunctionModel function = (FunctionModel)button.DataContext;
 
             Tests.TestFunctions.Remove(function);
             PrepareGraph();

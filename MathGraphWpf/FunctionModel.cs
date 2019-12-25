@@ -11,9 +11,8 @@ using System.Windows.Shapes;
 
 namespace MathGraphWpf
 {
-    class TestFunctionClass : INotifyPropertyChanged
+    class FunctionModel : INotifyPropertyChanged
     {
-        private bool expressionChanged = false;
         private string expressionString;
         private bool isGraphable;
 
@@ -30,7 +29,6 @@ namespace MathGraphWpf
                 var willIsGraphable = true;
                 try
                 {
-                    expressionChanged = (expressionString != value) ? true : false;
                     expressionString = value;
                     var context = new FunctionContext();
                     var tokenizer = new Tokenizer(new StringReader(expressionString));
@@ -143,7 +141,6 @@ namespace MathGraphWpf
             {
                 pointCollections.Add(points);
             }
-            pointsCache = pointCollections;
             return pointCollections;
         }
 
