@@ -8,6 +8,5 @@ namespace MathGraphWpf
     class TestFunctionClassViewModel
     {
         public ObservableCollection<TestFunctionClass> TestFunctions { get; set; } = new ObservableCollection<TestFunctionClass>();
-
     }
 }

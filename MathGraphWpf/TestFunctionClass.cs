@@ -1,7 +1,9 @@
 ﻿using MathExpressionEvaluator;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
@@ -9,16 +11,14 @@ using System.Windows.Shapes;
 
 namespace MathGraphWpf
 {
-    class TestFunctionClass
+    class TestFunctionClass : INotifyPropertyChanged
     {
-        private IEnumerable<PointCollection> pointsCache;
-        private decimal xmaxCache;
-        private decimal ymaxCache;
-        private decimal xminCache;
-        private decimal yminCache;
-        private decimal dxCache;
         private bool expressionChanged = false;
         private string expressionString;
+        private bool isGraphable;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public string ExpressionString
         {
             get
@@ -27,57 +27,60 @@ namespace MathGraphWpf
             }
             set
             {
-                expressionChanged = (expressionString != value) ? true : false;
-                expressionString = value;
-            }
-        }
-        public string Range { get; set; }
-        public string Domain { get; set; }
-        public decimal? Asymptote { get; set; } = null;
-
-        public TestFunctionClass(string expression)
-        {
-            var context = new FunctionContext();
-            var tokenizer = new Tokenizer(new StringReader(expression));
-            var parser = new Parser(tokenizer);
-            var nodeExpression = parser.ParseExpression();
-
-            // test
-            for (decimal i = 0; i < 2; i++)
-            {
-                context.Variable = i;
+                var willIsGraphable = true;
                 try
                 {
-                    _ = nodeExpression.Eval(context);
+                    expressionChanged = (expressionString != value) ? true : false;
+                    expressionString = value;
+                    var context = new FunctionContext();
+                    var tokenizer = new Tokenizer(new StringReader(expressionString));
+                    var parser = new Parser(tokenizer);
+                    var nodeExpression = parser.ParseExpression();
+
+                    for (decimal i = 0; i < 2; i++)
+                    {
+                        context.Variable = i;
+                        _ = nodeExpression.Eval(context);
+                    }
                 }
                 catch (DivideByZeroException)
                 {
 
                 }
+                catch (Exception)
+                {
+                    willIsGraphable = false;
+                }
+                IsGraphable = willIsGraphable;
+                NotifyPropertyChanged();
             }
+        }
+        
+        public bool IsGraphable
+        {
+            get
+            {
+                return isGraphable;
+            }
+            set
+            {
+                isGraphable = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public string Range { get; set; }
+        public string Domain { get; set; }
+        public decimal? Asymptote { get; set; } = null;
+        public Brush Color { get; set; }
 
-            expressionString = expression;
+
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public IEnumerable<PointCollection> GetGraphs(decimal xmax, decimal ymax, decimal xmin, decimal ymin, decimal dx)
         {
-            if (xmaxCache == xmax
-                && ymaxCache == ymax
-                && xminCache == xmin
-                && yminCache == ymin
-                && dxCache == dx
-                && !expressionChanged)
-            {
-                expressionChanged = false;
-                return pointsCache;
-            }
-
-            xmaxCache = xmax;
-            ymaxCache = ymax;
-            xminCache = xmin;
-            yminCache = ymin;
-            dxCache = dx;
-
             List<PointCollection> pointCollections = new List<PointCollection>();
             PointCollection points = new PointCollection();
 
@@ -93,7 +96,7 @@ namespace MathGraphWpf
             decimal? result = default;
 
             bool wrong = false;
-            for (decimal x = xmin; x < xmax; x += (decimal)0.02)
+            for (decimal x = xmin; x < xmax; x += dx)
             {
                 context.Variable = x;
                 try
@@ -144,14 +147,6 @@ namespace MathGraphWpf
             return pointCollections;
         }
 
-        private Polyline GetNewDefaultPolyline()
-        {
-            return new Polyline
-            {
-                Stroke = Brushes.Black,
-                Tag = "funPolGraph",
-                StrokeThickness = 1
-            };
-        }
+
     }
 }

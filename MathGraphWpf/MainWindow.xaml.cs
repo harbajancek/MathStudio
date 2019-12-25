@@ -30,16 +30,13 @@ namespace MathGraphWpf
             Brushes.Blue,
             Brushes.Green,
             Brushes.Purple,
+            Brushes.Orange,
+            Brushes.Pink,
+            Brushes.Brown
         };
         private int brushesIndex = 0;
 
         bool window_loaded = false;
-
-        //private int scrollIndex = 0;
-        //private readonly int scrollBase = 31;
-        //private readonly int scrollStep = 5;
-
-        //private int ScrollZoom => (scrollIndex * scrollStep) + scrollBase;
 
         private double wxmax { get; set; }
         private double wymax { get; set; }
@@ -58,11 +55,26 @@ namespace MathGraphWpf
                 PrepareGraph();
             }
         }
+        private double mouseDelta = 10;
+        public double MouseDelta
+        {
+            get
+            {
+                return mouseDelta;
+            }
+            set
+            {
+                mouseDelta = value;
+                mouseDeltaText.Text = mouseDelta.ToString();
+                PrepareGraph();
+            }
+        }
 
         TestFunctionClassViewModel Tests { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+            mouseDeltaText.Text = mouseDelta.ToString();
             Tests = new TestFunctionClassViewModel();
             ExpressionsList.DataContext = Tests;
             DisableGridCheckBox.DataContext = this;
@@ -107,24 +119,25 @@ namespace MathGraphWpf
 
         private void Add_ButtonClick(object sender, RoutedEventArgs e)
         {
-            try
+            TestFunctionClass function = new TestFunctionClass();
+            function.Color = brushes[brushesIndex];
+            brushesIndex++;
+            if (brushesIndex >= brushes.Count)
             {
-                Tests.TestFunctions.Add(new TestFunctionClass(ExpressionInput.Text)
-                {
-                    Domain = "null",
-                    Range = "null"
-                });
+                brushesIndex = 0;
             }
-            catch (Exception er)
-            {
-                ErrorMessage.Text = er.Message;
-                ErrorMessage.Visibility = Visibility.Visible;
-                return;
-            }
-
-            ErrorMessage.Visibility = Visibility.Hidden;
+            function.PropertyChanged += FunctionChange_NotifyEvent;
+            Tests.TestFunctions.Add(function);
 
             PrepareGraph();
+        }
+
+        private void FunctionChange_NotifyEvent(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsGraphable")
+            {
+                PrepareGraph();
+            }
         }
 
         public void DisplayGraphBase()
@@ -136,8 +149,11 @@ namespace MathGraphWpf
             Polyline pl;
             PointCollection points;
 
+            decimal delta = (decimal)Math.Ceiling(MouseDelta / 5);
+            mouseDeltaDeltaText.Text = delta.ToString();
+
             // y axis
-            for (decimal i = 0; i <= (decimal)Math.Floor(wymax); i += (decimal)yScale.Value)
+            for (decimal i = delta; i <= (decimal)Math.Floor(wymax); i += delta)
             {
 
                 points = new PointCollection
@@ -151,9 +167,28 @@ namespace MathGraphWpf
                     StrokeThickness = 1,
                     Stroke = Brushes.Gray
                 };
+
+                TextBlock numberBlock = new TextBlock()
+                {
+                    Text = i.ToString(),
+                    Background = Brushes.WhiteSmoke,
+                    Margin = new Thickness(5),
+                    Padding = new Thickness(0),
+                    FontWeight = FontWeights.Bold
+                };
+
+                Thickness padding = new Thickness(0);
+                numberBlock.Padding = padding;
+
+                Graph.Children.Add(numberBlock);
+                Point labelPoint = WtoD(new Point(0, (double)i));
+                Canvas.SetLeft(numberBlock, labelPoint.X);
+                Canvas.SetTop(numberBlock, labelPoint.Y);
+                Canvas.SetZIndex(numberBlock, 7);
+
                 Graph.Children.Add(pl);
             }
-            for (decimal i = 0; i >= (decimal)Math.Ceiling(wymin); i -= (decimal)yScale.Value)
+            for (decimal i = -delta; i >= (decimal)Math.Ceiling(wymin); i -= delta)
             {
 
                 points = new PointCollection
@@ -167,6 +202,25 @@ namespace MathGraphWpf
                     StrokeThickness = 1,
                     Stroke = Brushes.Gray
                 };
+
+                TextBlock numberBlock = new TextBlock()
+                {
+                    Text = i.ToString(),
+                    Background = Brushes.WhiteSmoke,
+                    Margin = new Thickness(5),
+                    Padding = new Thickness(0),
+                    FontWeight = FontWeights.Bold
+                };
+
+                Thickness padding = new Thickness(0);
+                numberBlock.Padding = padding;
+
+                Graph.Children.Add(numberBlock);
+                Point labelPoint = WtoD(new Point(0, (double)i));
+                Canvas.SetLeft(numberBlock, labelPoint.X);
+                Canvas.SetTop(numberBlock, labelPoint.Y);
+                Canvas.SetZIndex(numberBlock, 7);
+
                 Graph.Children.Add(pl);
             }
             points = new PointCollection
@@ -181,9 +235,10 @@ namespace MathGraphWpf
                 Stroke = Brushes.Black
             };
             Graph.Children.Add(pl);
+            Canvas.SetZIndex(pl, 5);
 
             // x axis
-            for (decimal i = 0; i <= (decimal)Math.Floor(wxmax); i += (decimal)xScale.Value)
+            for (decimal i = delta; i <= (decimal)Math.Floor(wxmax); i += delta)
             {
                 points = new PointCollection
                 {
@@ -196,9 +251,26 @@ namespace MathGraphWpf
                     StrokeThickness = 1,
                     Stroke = Brushes.Gray
                 };
+
+                TextBlock numberBlock = new TextBlock()
+                {
+                    Text = i.ToString(),
+                    Background = Brushes.WhiteSmoke,
+                    Margin = new Thickness(5),
+                    Padding = new Thickness(0),
+                    FontWeight = FontWeights.Bold
+                };
+
+                Graph.Children.Add(numberBlock);
+                Point labelPoint = WtoD(new Point((double)i, 0));
+                labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
+                Canvas.SetLeft(numberBlock, labelPoint.X);
+                Canvas.SetTop(numberBlock, labelPoint.Y);
+                Canvas.SetZIndex(numberBlock, 7);
+
                 Graph.Children.Add(pl);
             }
-            for (decimal i = 0; i >= (decimal)Math.Ceiling(wxmin); i -= (decimal)xScale.Value)
+            for (decimal i = 0; i >= (decimal)Math.Ceiling(wxmin); i -= delta)
             {
                 points = new PointCollection
                 {
@@ -211,6 +283,26 @@ namespace MathGraphWpf
                     StrokeThickness = 1,
                     Stroke = Brushes.Gray
                 };
+
+                TextBlock numberBlock = new TextBlock()
+                {
+                    Text = i.ToString(),
+                    Background = Brushes.WhiteSmoke,
+                    Margin = new Thickness(5),
+                    Padding = new Thickness(0),
+                    FontWeight = FontWeights.Bold
+                };
+
+                Thickness padding = new Thickness(0);
+                numberBlock.Padding = padding;
+
+                Graph.Children.Add(numberBlock);
+                Point labelPoint = WtoD(new Point((double)i, 0));
+                labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
+                Canvas.SetLeft(numberBlock, labelPoint.X);
+                Canvas.SetTop(numberBlock, labelPoint.Y);
+                Canvas.SetZIndex(numberBlock, 7);
+
                 Graph.Children.Add(pl);
             }
             points = new PointCollection
@@ -225,6 +317,7 @@ namespace MathGraphWpf
                 Stroke = Brushes.Black
             };
             Graph.Children.Add(pl);
+            Canvas.SetZIndex(pl, 5);
         }
 
         public void DisplayGraphs()
@@ -233,26 +326,25 @@ namespace MathGraphWpf
 
             DisplayGraphBase();
 
-            List<PointCollection> pointCollections = new List<PointCollection>();
-
             // See how big 1 pixel is in world coordinates.
             Point p0 = DtoW(new Point(0, 0));
             Point p1 = DtoW(new Point(1, 1));
             double dx = p1.X - p0.X;
 
-            foreach (var item in Tests.TestFunctions)
+            foreach (var function in Tests.TestFunctions)
             {
-                pointCollections.AddRange(item.GetGraphs((decimal)wxmax + 10, (decimal)wymax + 10, (decimal)wxmin - 10, (decimal)wymin - 10, (decimal)dx));
-            }
-
-            brushesIndex = 0;
-            foreach (var points in pointCollections)
-            {
-                DrawPolyline(points);
+                if (function.IsGraphable)
+                {
+                    List<PointCollection> pointCollections = new List<PointCollection>(function.GetGraphs((decimal)wxmax + 10, (decimal)wymax + 10, (decimal)wxmin - 10, (decimal)wymin - 10, (decimal)dx));
+                    foreach (var points in pointCollections)
+                    {
+                        DrawPolyline(points, function.Color);
+                    }
+                }
             }
         }
 
-        private void DrawPolyline(PointCollection points)
+        private void DrawPolyline(PointCollection points, Brush color)
         {
             PointCollection pointsD = new PointCollection(points.Count);
             foreach (var point in points)
@@ -263,14 +355,11 @@ namespace MathGraphWpf
             var polyline = GetNewDefaultPolyline();
             polyline.Points = pointsD;
 
-            polyline.Stroke = brushes[brushesIndex];
-            brushesIndex++;
-            if (brushesIndex >= brushes.Count)
-            {
-                brushesIndex = 0;
-            }
+            polyline.Stroke = color;
+            polyline.Opacity = .5;
 
             Graph.Children.Add(polyline);
+            Canvas.SetZIndex(polyline, 10);
         }
 
         private Polyline GetNewDefaultPolyline()
@@ -279,13 +368,20 @@ namespace MathGraphWpf
             {
                 Stroke = Brushes.Black,
                 Tag = "funPolGraph",
-                StrokeThickness = 40
+                StrokeThickness = 3
             };
         }
 
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-
+            if (e.Delta > 0)
+            {
+                MouseDelta /= 1.1;
+            }
+            else if (e.Delta < 0)
+            {
+                MouseDelta *= 1.1;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -301,10 +397,10 @@ namespace MathGraphWpf
             double dymax = Graph.ActualHeight;
             double difference = dxmax / dymax;
 
-            wxmax = 1 / xScale.Value * 10 * difference;
-            wymax = 1 / yScale.Value * 10;
-            wxmin = 1 / xScale.Value * -10 * difference;
-            wymin = 1 / yScale.Value * -10;
+            wxmax = MouseDelta * difference;
+            wymax = MouseDelta;
+            wxmin = -MouseDelta * difference;
+            wymin = -MouseDelta;
 
             prepareTransformations(0, dxmax, dymax, 0);
 
@@ -372,6 +468,16 @@ namespace MathGraphWpf
             Tests.TestFunctions.Clear();
             DisplayGraphs();
         }
+
+        private void RemoveItem_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            TestFunctionClass function = (TestFunctionClass)button.DataContext;
+
+            Tests.TestFunctions.Remove(function);
+            PrepareGraph();
+        }
+
         public static IEnumerable<Point> GetIntersectionPoints(PointCollection points1, PointCollection points2)
         {
             return points1.Intersect(points2);
