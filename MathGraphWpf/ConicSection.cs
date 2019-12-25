@@ -7,53 +7,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace MathStudioWpf
 {
-    class FunctionModel : IGraphable
+    class ConicSection : IGraphable
     {
-        private string expressionString;
         private bool isGraphable;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public string ExpressionString
-        {
-            get
-            {
-                return expressionString;
-            }
-            set
-            {
-                var willIsGraphable = true;
-                try
-                {
-                    expressionString = value;
-                    var context = new FunctionContext();
-                    var tokenizer = new Tokenizer(new StringReader(expressionString));
-                    var parser = new Parser(tokenizer);
-                    var nodeExpression = parser.ParseExpression();
-
-                    for (decimal i = 0; i < 2; i++)
-                    {
-                        context.Variable = i;
-                        _ = nodeExpression.Eval(context);
-                    }
-                }
-                catch (DivideByZeroException)
-                {
-
-                }
-                catch (Exception)
-                {
-                    willIsGraphable = false;
-                }
-                IsGraphable = willIsGraphable;
-                NotifyPropertyChanged();
-            }
-        }
-        
         public bool IsGraphable
         {
             get
@@ -67,13 +26,16 @@ namespace MathStudioWpf
             }
         }
         public Brush Color { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        public decimal[] Coefficients { get; set; } = new decimal[5];
+
+        public decimal Eccentricity { get; set; }
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
         public IEnumerable<PointCollection> GetGraphPoints(decimal xmax, decimal ymax, decimal xmin, decimal ymin, decimal dx)
         {
             List<PointCollection> pointCollections = new List<PointCollection>();
@@ -83,8 +45,10 @@ namespace MathStudioWpf
 
             points = new PointCollection();
 
+            string expressionString = "(-(b * x + e) - pow((b * x + e)^2 - 4*c*(a*x^2 + d*x + f)),1/2) / (2*c)";
+
             var context = new FunctionContext();
-            var tokenizer = new Tokenizer(new StringReader(ExpressionString));
+            var tokenizer = new Tokenizer(new StringReader());
             var parser = new Parser(tokenizer);
             var nodeExpression = parser.ParseExpression();
 
@@ -119,7 +83,7 @@ namespace MathStudioWpf
                 {
                     if (points.Count != 0)
                     {
-                        if (!currentPoint.Equals(new Point(0,0)))
+                        if (!currentPoint.Equals(new Point(0, 0)))
                         {
                             points.Add(currentPoint);
                         }
@@ -140,7 +104,5 @@ namespace MathStudioWpf
             }
             return pointCollections;
         }
-
-
     }
 }
