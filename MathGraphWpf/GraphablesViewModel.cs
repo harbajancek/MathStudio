@@ -5,8 +5,8 @@ using System.Text;
 
 namespace MathStudioWpf
 {
-    class FunctionsViewModel
+    class GraphablesViewModel
     {
-        public ObservableCollection<IGraphable> TestFunctions { get; set; } = new ObservableCollection<IGraphable>();
+        public ObservableCollection<IGraphable> Graphables { get; set; } = new ObservableCollection<IGraphable>();
     }
 }

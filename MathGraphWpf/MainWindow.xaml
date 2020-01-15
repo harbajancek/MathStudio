@@ -43,7 +43,7 @@
                 <Button Content="Přidat funkci" Style="{StaticResource DefaultButton}" Margin="5" Click="Add_ButtonClick"/>
                 <TextBlock x:Name="ErrorMessage" Foreground="Red" Visibility="Visible" FontSize="15" TextWrapping="Wrap"/>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
-                    <ItemsControl x:Name="ExpressionsList" ItemsSource="{Binding TestFunctions}">
+                    <ItemsControl x:Name="ExpressionsList" ItemsSource="{Binding Graphables}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Margin="10" Padding="10" Background="WhiteSmoke" CornerRadius="3">

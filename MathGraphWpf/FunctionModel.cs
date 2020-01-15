@@ -35,7 +35,7 @@ namespace MathStudioWpf
                     var parser = new Parser(tokenizer);
                     var nodeExpression = parser.ParseExpression();
 
-                    for (decimal i = 0; i < 2; i++)
+                    for (float i = 0; i < 2; i++)
                     {
                         context.Variable = i;
                         _ = nodeExpression.Eval(context);
@@ -74,7 +74,7 @@ namespace MathStudioWpf
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public IEnumerable<PointCollection> GetGraphPoints(decimal xmax, decimal ymax, decimal xmin, decimal ymin, decimal dx)
+        public IEnumerable<PointCollection> GetGraphPoints(float xmax, float ymax, float xmin, float ymin, float dx)
         {
             List<PointCollection> pointCollections = new List<PointCollection>();
             PointCollection points = new PointCollection();
@@ -88,10 +88,10 @@ namespace MathStudioWpf
             var parser = new Parser(tokenizer);
             var nodeExpression = parser.ParseExpression();
 
-            decimal? result = default;
+            float? result = default;
 
             bool wrong = false;
-            for (decimal x = xmin; x < xmax; x += dx)
+            for (float x = xmin; x < xmax; x += dx)
             {
                 context.Variable = x;
                 try
@@ -100,8 +100,12 @@ namespace MathStudioWpf
                 }
                 catch (DivideByZeroException)
                 {
-                    decimal y = (currentPoint.Y > 0) ? ymax : ymin;
+                    float y = (currentPoint.Y > 0) ? ymax : ymin;
                     currentPoint = new Point(currentPoint.X, (double)y);
+                    wrong = true;
+                }
+                catch (OverflowException)
+                {
                     wrong = true;
                 }
                 catch (Exception e)

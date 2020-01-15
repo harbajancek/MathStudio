@@ -6,9 +6,9 @@ namespace MathExpressionEvaluator
 {
     public class FunctionContext : IContext
     {
-        public decimal Variable { get; set; }
+        public float Variable { get; set; }
 
-        public decimal ResolveVariable(string name)
+        public float ResolveVariable(string name)
         {
             return Variable;
         }

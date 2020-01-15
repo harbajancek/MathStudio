@@ -14,9 +14,9 @@ namespace MathExpressionEvaluator
             Arguments = arguments;
         }
 
-        public override decimal? Eval(IContext context)
+        public override float? Eval(IContext context)
         {
-            var argumentValues = new decimal?[Arguments.Length];
+            var argumentValues = new float?[Arguments.Length];
             for (int i = 0; i < Arguments.Length; i++)
             {
                 argumentValues[i] = Arguments[i].Eval(context);

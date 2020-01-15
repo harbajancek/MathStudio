@@ -11,7 +11,7 @@ namespace MathExpressionEvaluator
         {
             Variable = variable;
         }
-        public override decimal? Eval(IContext context)
+        public override float? Eval(IContext context)
         {
             return context.ResolveVariable(Variable);
         }

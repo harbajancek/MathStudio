@@ -9,7 +9,7 @@ namespace MathStudioWpf
     interface IGraphable : INotifyPropertyChanged
     {
         bool IsGraphable { get; set; }
-        IEnumerable<PointCollection> GetGraphPoints(decimal xmax, decimal ymax, decimal xmin, decimal ymin, decimal dx);
+        IEnumerable<PointCollection> GetGraphPoints(float xmax, float ymax, float xmin, float ymin, float dx);
         Brush Color { get; set; }
     }
 }

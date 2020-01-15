@@ -6,13 +6,13 @@ namespace MathExpressionEvaluator
 {
     class NodeNumber : Node
     {
-        private decimal Number { get; }
-        public NodeNumber(decimal number)
+        private float Number { get; }
+        public NodeNumber(float number)
         {
             Number = number;
         }
 
-        public override decimal? Eval(IContext context)
+        public override float? Eval(IContext context)
         {
             return Number;
         }

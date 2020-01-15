@@ -6,6 +6,6 @@ namespace MathExpressionEvaluator
 {
     public abstract class Node
     {
-        public abstract decimal? Eval(IContext context);
+        public abstract float? Eval(IContext context);
     }
 }

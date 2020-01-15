@@ -69,13 +69,13 @@ namespace MathStudioWpf
             }
         }
 
-        FunctionsViewModel Tests { get; set; }
+        GraphablesViewModel GraphablesViewModel { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             mouseDeltaText.Text = mouseDelta.ToString();
-            Tests = new FunctionsViewModel();
-            ExpressionsList.DataContext = Tests;
+            GraphablesViewModel = new GraphablesViewModel();
+            ExpressionsList.DataContext = GraphablesViewModel;
             DisableGridCheckBox.DataContext = this;
         }
 
@@ -126,7 +126,7 @@ namespace MathStudioWpf
                 brushesIndex = 0;
             }
             function.PropertyChanged += FunctionChange_NotifyEvent;
-            Tests.TestFunctions.Add(function);
+            GraphablesViewModel.Graphables.Add(function);
 
             PrepareGraph();
         }
@@ -148,11 +148,11 @@ namespace MathStudioWpf
             Polyline pl;
             PointCollection points;
 
-            decimal delta = (decimal)Math.Ceiling(MouseDelta / 5);
+            float delta = (float)Math.Ceiling(MouseDelta / 5);
             mouseDeltaDeltaText.Text = delta.ToString();
 
             // y axis
-            for (decimal i = delta; i <= (decimal)Math.Floor(wymax); i += delta)
+            for (float i = delta; i <= (float)Math.Floor(wymax); i += delta)
             {
 
                 points = new PointCollection
@@ -187,7 +187,7 @@ namespace MathStudioWpf
 
                 Graph.Children.Add(pl);
             }
-            for (decimal i = -delta; i >= (decimal)Math.Ceiling(wymin); i -= delta)
+            for (float i = -delta; i >= (float)Math.Ceiling(wymin); i -= delta)
             {
 
                 points = new PointCollection
@@ -237,7 +237,7 @@ namespace MathStudioWpf
             Canvas.SetZIndex(pl, 5);
 
             // x axis
-            for (decimal i = delta; i <= (decimal)Math.Floor(wxmax); i += delta)
+            for (float i = delta; i <= (float)Math.Floor(wxmax); i += delta)
             {
                 points = new PointCollection
                 {
@@ -269,7 +269,7 @@ namespace MathStudioWpf
 
                 Graph.Children.Add(pl);
             }
-            for (decimal i = 0; i >= (decimal)Math.Ceiling(wxmin); i -= delta)
+            for (float i = 0; i >= (float)Math.Ceiling(wxmin); i -= delta)
             {
                 points = new PointCollection
                 {
@@ -330,11 +330,11 @@ namespace MathStudioWpf
             Point p1 = DtoW(new Point(1, 1));
             double dx = p1.X - p0.X;
 
-            foreach (var function in Tests.TestFunctions)
+            foreach (var function in GraphablesViewModel.Graphables)
             {
                 if (function.IsGraphable)
                 {
-                    List<PointCollection> pointCollections = new List<PointCollection>(function.GetGraphPoints((decimal)wxmax + 10, (decimal)wymax + 10, (decimal)wxmin - 10, (decimal)wymin - 10, (decimal)dx));
+                    List<PointCollection> pointCollections = new List<PointCollection>(function.GetGraphPoints((float)wxmax + 10, (float)wymax + 10, (float)wxmin - 10, (float)wymin - 10, (float)dx));
                     foreach (var points in pointCollections)
                     {
                         DrawPolyline(points, function.Color);
@@ -385,6 +385,7 @@ namespace MathStudioWpf
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            GraphablesViewModel.Graphables.Add(new ConicSectionModel() { Color = Brushes.Black });
             PrepareGraph();
             window_loaded = true;
         }
@@ -464,7 +465,7 @@ namespace MathStudioWpf
 
         private void Clear_ButtonClick(object sender, RoutedEventArgs e)
         {
-            Tests.TestFunctions.Clear();
+            GraphablesViewModel.Graphables.Clear();
             DisplayGraphs();
         }
 
@@ -473,7 +474,7 @@ namespace MathStudioWpf
             Button button = (Button)sender;
             FunctionModel function = (FunctionModel)button.DataContext;
 
-            Tests.TestFunctions.Remove(function);
+            GraphablesViewModel.Graphables.Remove(function);
             PrepareGraph();
         }
 

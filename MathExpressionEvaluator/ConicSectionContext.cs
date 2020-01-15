@@ -4,17 +4,17 @@ using System.Text;
 
 namespace MathExpressionEvaluator
 {
-    class ConicSectionContext : IContext
+    public class ConicSectionContext : IContext
     {
-        public decimal A { get; set; }
-        public decimal B { get; set; }
-        public decimal C { get; set; }
-        public decimal D { get; set; }
-        public decimal E { get; set; }
-        public decimal F { get; set; }
-        public decimal X { get; set; }
+        public float A { get; set; }
+        public float B { get; set; }
+        public float C { get; set; }
+        public float D { get; set; }
+        public float E { get; set; }
+        public float F { get; set; }
+        public float X { get; set; }
 
-        public decimal ResolveVariable(string name) => name switch
+        public float ResolveVariable(string name) => name switch
         {
             _ when (name == "a" || name == "A") => A,
             _ when (name == "b" || name == "B") => B,
