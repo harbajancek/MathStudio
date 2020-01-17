@@ -10,6 +10,7 @@ using System.Windows.Media;
 
 namespace MathStudioWpf
 {
+    /*
     class ConicSectionModel : IGraphable
     {
         public bool IsGraphable
@@ -33,7 +34,7 @@ namespace MathStudioWpf
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public IEnumerable<PointCollection> GetGraphPoints(float xmax, float ymax, float xmin, float ymin, float dx)
+        public IEnumerable<Polyline> GetGraphPoints(float xmax, float ymax, float xmin, float ymin, float dx)
         {
             List<PointCollection> pointCollections = new List<PointCollection>();
             PointCollection points = new PointCollection();
@@ -138,4 +139,5 @@ namespace MathStudioWpf
             return pointCollections;
         }
     }
+    */
 }

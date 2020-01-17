@@ -6,15 +6,15 @@ namespace MathExpressionEvaluator
 {
     public class ConicSectionContext : IContext
     {
-        public float A { get; set; }
-        public float B { get; set; }
-        public float C { get; set; }
-        public float D { get; set; }
-        public float E { get; set; }
-        public float F { get; set; }
-        public float X { get; set; }
+        public double A { get; set; }
+        public double B { get; set; }
+        public double C { get; set; }
+        public double D { get; set; }
+        public double E { get; set; }
+        public double F { get; set; }
+        public double X { get; set; }
 
-        public float ResolveVariable(string name) => name switch
+        public double ResolveVariable(string name) => name switch
         {
             _ when (name == "a" || name == "A") => A,
             _ when (name == "b" || name == "B") => B,

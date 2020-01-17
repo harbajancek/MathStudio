@@ -7,17 +7,17 @@ namespace MathExpressionEvaluator
     class NodeUnary : Node
     {
         private Node Right { get; }
-        private Func<float?, float?> Operation { get; }
+        private Func<double?, double?> Operation { get; }
 
-        public NodeUnary(Node right, Func<float?, float?> operation)
+        public NodeUnary(Node right, Func<double?, double?> operation)
         {
             Right = right;
             Operation = operation;
         }
 
-        public override float? Eval(IContext context)
+        public override double? Eval(IContext context)
         {
-            float? rightValue = Right.Eval(context);
+            double? rightValue = Right.Eval(context);
 
             return Operation(rightValue);
         }

@@ -6,8 +6,8 @@ namespace MathExpressionEvaluator
 {
     public interface IContext
     {
-        public float ResolveVariable(string name);
-        public float? CallFunction(string functionName, float?[] arguments)
+        public double ResolveVariable(string name);
+        public double? CallFunction(string functionName, double?[] arguments)
         {
             double result = functionName switch
             {
@@ -19,14 +19,14 @@ namespace MathExpressionEvaluator
                 _ => throw new Exception("Function name not recognized")
             };
 
-            if (result > (double)float.MaxValue)
+            if (result > (double)double.MaxValue)
             {
-                return float.MaxValue;
+                return double.MaxValue;
             }
 
-            if (result < (double)float.MinValue)
+            if (result < (double)double.MinValue)
             {
-                return float.MinValue;
+                return double.MinValue;
             }
 
             if (double.IsNaN(result))
@@ -34,7 +34,7 @@ namespace MathExpressionEvaluator
                 return null;
             }
 
-            return (float)result;
+            return (double)result;
         }
     }
 }

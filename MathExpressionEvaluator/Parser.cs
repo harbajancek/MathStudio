@@ -174,7 +174,7 @@ namespace MathExpressionEvaluator
 
         
 
-        private static Func<float?, float?, float?> FromToken(Token token) => token switch
+        private static Func<double?, double?, double?> FromToken(Token token) => token switch
         {
             Token.Add => (a, b) => a + b,
             Token.Subtract => (a, b) => a - b,
@@ -187,7 +187,7 @@ namespace MathExpressionEvaluator
                 }
                 return a / b;
             },
-            Token.Raise => (a,b) => (float)Math.Pow((double)a,(double)b),
+            Token.Raise => (a,b) => (double)Math.Pow((double)a,(double)b),
             _ => null
         };
     }

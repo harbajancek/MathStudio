@@ -12,9 +12,9 @@ namespace MathExpressionEvaluator
             Argument = argument;
         }
 
-        public override float? Eval(IContext context)
+        public override double? Eval(IContext context)
         {
-            return Math.Abs((float)Argument.Eval(context));
+            return Math.Abs((double)Argument.Eval(context));
         }
     }
 }

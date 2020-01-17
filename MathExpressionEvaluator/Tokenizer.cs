@@ -10,7 +10,7 @@ namespace MathExpressionEvaluator
     {
         TextReader Reader { get; }
         public Token Token { get; private set; }
-        public float Number { get; private set; }
+        public double Number { get; private set; }
         public string Identifier { get; private set; }
         private char CurrentChar { get; set; }
         public Tokenizer(TextReader reader)
@@ -53,15 +53,15 @@ namespace MathExpressionEvaluator
             if (Token == Token.Number)
             {
                 StringBuilder sb = new StringBuilder();
-                bool hasfloatPoint = false;
-                while (char.IsDigit(CurrentChar) || (!hasfloatPoint && CurrentChar == '.'))
+                bool hasdoublePoint = false;
+                while (char.IsDigit(CurrentChar) || (!hasdoublePoint && CurrentChar == '.'))
                 {
                     sb.Append(CurrentChar);
-                    hasfloatPoint = CurrentChar == '.';
+                    hasdoublePoint = CurrentChar == '.';
                     nextChar();
                 }
 
-                Number = float.Parse(sb.ToString(), CultureInfo.InvariantCulture);
+                Number = double.Parse(sb.ToString(), CultureInfo.InvariantCulture);
             }
             else if (Token == Token.Identifier)
             {

@@ -8,19 +8,19 @@ namespace MathExpressionEvaluator
     {
         private Node Left { get; }
         private Node Right { get; }
-        private Func<float?, float?, float?> Operation { get; }
+        private Func<double?, double?, double?> Operation { get; }
 
-        public NodeBinaryOperation(Node left, Node right, Func<float?, float?, float?> operation)
+        public NodeBinaryOperation(Node left, Node right, Func<double?, double?, double?> operation)
         {
             Left = left;
             Right = right;
             Operation = operation;
         }
 
-        public override float? Eval(IContext context)
+        public override double? Eval(IContext context)
         {
-            float? leftValue = Left.Eval(context);
-            float? rightValue = Right.Eval(context);
+            double? leftValue = Left.Eval(context);
+            double? rightValue = Right.Eval(context);
 
             return Operation(leftValue, rightValue);
         }

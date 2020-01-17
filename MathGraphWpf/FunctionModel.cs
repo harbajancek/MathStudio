@@ -35,7 +35,7 @@ namespace MathStudioWpf
                     var parser = new Parser(tokenizer);
                     var nodeExpression = parser.ParseExpression();
 
-                    for (float i = 0; i < 2; i++)
+                    for (double i = 0; i < 2; i++)
                     {
                         context.Variable = i;
                         _ = nodeExpression.Eval(context);
@@ -74,24 +74,21 @@ namespace MathStudioWpf
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public IEnumerable<PointCollection> GetGraphPoints(float xmax, float ymax, float xmin, float ymin, float dx)
+        public IEnumerable<IEnumerable<Point>> GetGraphPoints(double xmax, double ymax, double xmin, double ymin, double dx)
         {
-            List<PointCollection> pointCollections = new List<PointCollection>();
-            PointCollection points = new PointCollection();
+            List<Point> points = new List<Point>();
 
             Point currentPoint;
-
-            points = new PointCollection();
 
             var context = new FunctionContext();
             var tokenizer = new Tokenizer(new StringReader(ExpressionString));
             var parser = new Parser(tokenizer);
             var nodeExpression = parser.ParseExpression();
 
-            float? result = default;
+            double? result = default;
 
             bool wrong = false;
-            for (float x = xmin; x < xmax; x += dx)
+            for (double x = xmin; x < xmax; x += dx)
             {
                 context.Variable = x;
                 try
@@ -100,7 +97,7 @@ namespace MathStudioWpf
                 }
                 catch (DivideByZeroException)
                 {
-                    float y = (currentPoint.Y > 0) ? ymax : ymin;
+                    double y = (currentPoint.Y > 0) ? ymax : ymin;
                     currentPoint = new Point(currentPoint.X, (double)y);
                     wrong = true;
                 }
@@ -127,8 +124,8 @@ namespace MathStudioWpf
                         {
                             points.Add(currentPoint);
                         }
-                        pointCollections.Add(points);
-                        points = new PointCollection();
+                        yield return points;
+                        points = new List<Point>();
                     }
                     wrong = false;
                     continue;
@@ -140,9 +137,8 @@ namespace MathStudioWpf
 
             if (points.Count != 0)
             {
-                pointCollections.Add(points);
+                yield return points;
             }
-            return pointCollections;
         }
 
 

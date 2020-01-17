@@ -11,7 +11,7 @@ namespace MathExpressionEvaluator
         {
             Variable = variable;
         }
-        public override float? Eval(IContext context)
+        public override double? Eval(IContext context)
         {
             return context.ResolveVariable(Variable);
         }

@@ -21,7 +21,7 @@
     <Grid>
         <Grid>
             <Border x:Name="GraphWrapper" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <Canvas x:Name="Graph" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <Canvas x:Name="Graph" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseLeftButtonDown="Graph_MouseLeftButtonDown" MouseDown="Graph_MouseLeftButtonDown" MouseMove="Graph_MouseMove"/>
             </Border>
         </Grid>
         <Grid>
