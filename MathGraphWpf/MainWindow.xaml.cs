@@ -15,8 +15,7 @@ namespace MathStudioWpf
     public partial class MainWindow : Window
     {
         private GraphDrawer GraphDrawer { get; set; } = new GraphDrawer();
-
-        bool window_loaded { get; set; } = false;
+        private bool window_loaded { get; set; } = false;
 
         GraphablesViewModel GraphablesViewModel { get; set; }
         public MainWindow()
@@ -27,7 +26,6 @@ namespace MathStudioWpf
             GraphDrawer.Graphables = GraphablesViewModel.Graphables;
             
             ExpressionsList.DataContext = GraphablesViewModel;
-            DisableGridCheckBox.DataContext = this;
         }
 
         private void Add_ButtonClick(object sender, RoutedEventArgs e)
@@ -123,6 +121,12 @@ namespace MathStudioWpf
         private void Graph_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             MousePosition = e.GetPosition(Graph);
+        }
+
+        private void PICheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            GraphDrawer.IsPiEnabled = (bool)PICheckbox.IsChecked;
+            GraphDrawer.DrawGraph();
         }
     }
 }

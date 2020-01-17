@@ -10,7 +10,7 @@ namespace MathStudioWpf
 {
     class GraphDrawer
     {
-        public bool DisableGrid { get; set; }
+        public bool IsPiEnabled { get; set; }
 
         private int ZoomLevel
         {
@@ -161,14 +161,18 @@ namespace MathStudioWpf
         }
         private void DrawBaseX(double delta)
         {
+            if (IsPiEnabled)
+            {
+                delta = Math.PI;
+            }
             PointCollection points;
             Polyline pl;
-            for (double i = delta; i <= Math.Floor(WXMax); i += delta)
+            for (double i = 1; i <= Math.Floor(WXMax)/delta; i += 1)
             {
                 points = new PointCollection
                 {
-                    WtoD(new Point(i, WYMin)),
-                    WtoD(new Point(i, WYMax))
+                    WtoD(new Point(i*delta, WYMin)),
+                    WtoD(new Point(i*delta, WYMax))
                 };
                 pl = new Polyline
                 {
@@ -179,7 +183,7 @@ namespace MathStudioWpf
 
                 TextBlock numberBlock = new TextBlock()
                 {
-                    Text = i.ToString(),
+                    Text = (IsPiEnabled)? ((i > 1)? $"{i}π": "π"):$"{i*delta}",
                     Background = Brushes.WhiteSmoke,
                     Margin = new Thickness(5),
                     Padding = new Thickness(0),
@@ -187,7 +191,7 @@ namespace MathStudioWpf
                 };
 
                 AddToGraph(numberBlock);
-                Point labelPoint = WtoD(new Point((double)i, 0));
+                Point labelPoint = WtoD(new Point(i*delta, 0));
                 labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
                 Canvas.SetLeft(numberBlock, labelPoint.X);
                 Canvas.SetTop(numberBlock, labelPoint.Y);
@@ -195,12 +199,12 @@ namespace MathStudioWpf
 
                 AddToGraph(pl);
             }
-            for (double i = 0; i >= Math.Ceiling(WXMin); i -= delta)
+            for (double i = -1; i >= Math.Ceiling(WXMin)/delta; i -= 1)
             {
                 points = new PointCollection
                 {
-                    WtoD(new Point(i, WYMin)),
-                    WtoD(new Point(i, WYMax))
+                    WtoD(new Point(i*delta, WYMin)),
+                    WtoD(new Point(i*delta, WYMax))
                 };
                 pl = new Polyline
                 {
@@ -211,7 +215,7 @@ namespace MathStudioWpf
 
                 TextBlock numberBlock = new TextBlock()
                 {
-                    Text = i.ToString(),
+                    Text = (IsPiEnabled) ? ((i < -1) ? $"{i}π" : "π") : $"{i * delta}",
                     Background = Brushes.WhiteSmoke,
                     Margin = new Thickness(5),
                     Padding = new Thickness(0),
@@ -222,7 +226,7 @@ namespace MathStudioWpf
                 numberBlock.Padding = padding;
 
                 AddToGraph(numberBlock);
-                Point labelPoint = WtoD(new Point((double)i, 0));
+                Point labelPoint = WtoD(new Point(i*delta, 0));
                 labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
                 Canvas.SetLeft(numberBlock, labelPoint.X);
                 Canvas.SetTop(numberBlock, labelPoint.Y);

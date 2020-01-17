@@ -16,7 +16,7 @@ namespace MathStudioWpf
         {
             get
             {
-                return Math.Pow(1.01, ZoomLevel) * 10;
+                return Math.Pow(1.05, ZoomLevel) * 10;
             }
         }
 
