@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MathExpressionEvaluator
 {
-    public enum Error
+    public enum ExpressionError
     {
         DivisionByZero,
         None

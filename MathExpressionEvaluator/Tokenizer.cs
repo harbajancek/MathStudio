@@ -23,7 +23,7 @@ namespace MathExpressionEvaluator
         private void nextChar()
         {
             int i = Reader.Read();
-            CurrentChar = i >= 0 ? (char)i : '\0';
+            CurrentChar = (i >= 0) ? (char)i : '\0';
         }
 
         public void NextToken()

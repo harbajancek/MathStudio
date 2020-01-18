@@ -6,15 +6,20 @@ namespace MathExpressionEvaluator
 {
     class NodeNumber : Node
     {
-        private double Number { get; }
+        public double Number { get; private set; }
         public NodeNumber(double number)
         {
             Number = number;
         }
 
-        public override double? Eval(IContext context)
+        public override double Eval(IContext context)
         {
             return Number;
+        }
+
+        public override Node Simplify()
+        {
+            return this;
         }
     }
 }

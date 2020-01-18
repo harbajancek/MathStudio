@@ -6,15 +6,21 @@ namespace MathExpressionEvaluator
 {
     class NodeAbsolute : Node
     {
-        private Node Argument { get; }
+        public Node Argument { get; private set; }
         public NodeAbsolute(Node argument)
         {
             Argument = argument;
         }
 
-        public override double? Eval(IContext context)
+        public override double Eval(IContext context)
         {
-            return Math.Abs((double)Argument.Eval(context));
+            return Math.Abs(Argument.Eval(context));
+        }
+
+        public override Node Simplify()
+        {
+            Argument = Argument.Simplify();
+            return this;
         }
     }
 }

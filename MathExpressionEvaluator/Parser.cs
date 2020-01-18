@@ -22,7 +22,7 @@ namespace MathExpressionEvaluator
                 throw new Exception($"Unexpected characters at the end of an expression.");
             }
 
-            return expression;
+            return expression.Simplify();
         }
 
         private Node parseAddSubtract()
@@ -125,7 +125,7 @@ namespace MathExpressionEvaluator
 
                 Tokenizer.NextToken();
                 return new NodeAbsolute(node);
-                
+
             }
             else if (Tokenizer.Token == Token.Identifier)
             {
@@ -172,22 +172,15 @@ namespace MathExpressionEvaluator
             }
         }
 
-        
 
-        private static Func<double?, double?, double?> FromToken(Token token) => token switch
+
+        private static BinaryOperation FromToken(Token token) => token switch
         {
-            Token.Add => (a, b) => a + b,
-            Token.Subtract => (a, b) => a - b,
-            Token.Multiply => (a, b) => a * b,
-            Token.Divide => (a, b) =>
-            {
-                if (b == 0)
-                {
-                    throw new DivideByZeroException();
-                }
-                return a / b;
-            },
-            Token.Raise => (a,b) => (double)Math.Pow((double)a,(double)b),
+            Token.Add => new BinaryOperation((a, b) => a + b, OperationType.Addition),
+            Token.Subtract => new BinaryOperation((a, b) => a - b, OperationType.Addition),
+            Token.Multiply => new BinaryOperation((a, b) => a * b, OperationType.Addition),
+            Token.Divide => new BinaryOperation((a, b) => a / b, OperationType.Addition),
+            Token.Raise => new BinaryOperation((a, b) => Math.Pow(a, b), OperationType.Addition),
             _ => null
         };
     }
