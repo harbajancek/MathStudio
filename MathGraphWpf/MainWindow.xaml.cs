@@ -26,6 +26,8 @@ namespace MathStudioWpf
             GraphDrawer.Graphables = GraphablesViewModel.Graphables;
 
             ExpressionsList.DataContext = GraphablesViewModel;
+
+            GraphablesViewModel.Graphables.Add(new FunctionModel());
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
