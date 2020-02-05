@@ -23,28 +23,6 @@ namespace MathStudioWpf
                 CoordinatesConverter.ZoomLevel = value;
             }
         }
-        double OffsetX
-        {
-            get
-            {
-                return CoordinatesConverter.OffsetX;
-            }
-            set
-            {
-                CoordinatesConverter.OffsetX = value;
-            }
-        }
-        double OffsetY
-        {
-            get
-            {
-                return CoordinatesConverter.OffsetY;
-            }
-            set
-            {
-                CoordinatesConverter.OffsetY = value;
-            }
-        }
         double WXMax { get => CoordinatesConverter.GetWXMax(); }
         double WXMin { get => CoordinatesConverter.GetWXMin(); }
         double WYMax { get => CoordinatesConverter.GetWYMax(); }
@@ -65,188 +43,165 @@ namespace MathStudioWpf
             DrawGraphables();
         }
 
+        private Fraction GetIter(out Fraction start, bool isX)
+        {
+            Fraction iterF;
+            decimal decimalPoint = 1m;
+            double delta = WXMax - WXMin;
+            double iter;
+            decimal roundedIter;
+            start = new Fraction((isX) ? WXMin : WYMin);
+
+            double i = (IsPiEnabled && isX) ? Math.PI : 1;
+            i *= 10;
+
+            if (delta >= i)
+            {
+                while (delta >= i)
+                {
+                    delta /= i;
+                    decimalPoint *= 10;
+                }
+
+                decimalPoint /= 10;
+            }
+            else if (delta < i)
+            {
+                while (delta <= i/10)
+                {
+                    delta *= i;
+                    decimalPoint /= 10;
+                }
+
+                decimalPoint /= 10;
+            }
+
+
+            if (isX && IsPiEnabled)
+            {
+                if (delta > 5 * Math.PI)
+                {
+                    roundedIter = 5;
+                }
+                else if (delta > 2 * Math.PI)
+                {
+                    roundedIter = 2;
+                }
+                else
+                {
+                    roundedIter = 1;
+                }
+            }
+            else
+            {
+                if (delta > 5)
+                {
+                    roundedIter = 5;
+                }
+                else if (delta > 2)
+                {
+                    roundedIter = 2;
+                }
+                else
+                {
+                    roundedIter = 1;
+                }
+            }
+
+            iter = (double)(roundedIter * decimalPoint);
+            if (IsPiEnabled && isX)
+            {
+                iterF = new Fraction(iter, true);
+            }
+            else
+            {
+                iterF = new Fraction(iter);
+            }
+
+            Fraction startRounded = new Fraction(0, true);
+
+            while (Math.Abs(start.RealValue) > Math.Abs(startRounded.RealValue))
+            {
+                if (start > 0)
+                {
+                    startRounded += iterF;
+                }
+                else
+                {
+                    startRounded -= iterF;
+                }
+            }
+            start = startRounded;
+
+            return iterF;
+        }
+
         private void DrawBase()
         {
-            
-            double delta = Math.Ceiling(WXMax / 6);
-            DrawBaseX(delta);
-            DrawBaseY(delta);
-        }
-        private void DrawBaseY(double delta)
-        {
-            PointCollection points;
-            Polyline pl;
-            for (double i = delta; i <= Math.Floor(WYMax); i += delta)
+            Polyline polyline;
+            TextBlock numberBlock;
+
+            for (int coor = 0; coor < 2; coor++)
             {
-                points = new PointCollection
+                bool isX = (coor == 0);
+
+                double end = Math.Ceiling((isX) ? WXMax : WYMax);
+
+                Fraction iter = GetIter(out Fraction start, isX);
+
+                for (double i = 0; iter * i + start < end; i++)
                 {
-                    WtoD(new Point(WXMin, i)),
-                    WtoD(new Point(WXMax, i))
-                };
-                pl = new Polyline
-                {
-                    Points = points,
-                    StrokeThickness = 1,
-                    Stroke = Brushes.Gray
-                };
+                    Fraction currentValue = ((iter * i) + start);
+                    polyline = new Polyline
+                    {
+                        Points = new PointCollection()
+                        {
+                            WtoD(new Point(
+                                (isX) ? currentValue.RealValue : WXMin,
+                                (isX) ? WYMin : currentValue.RealValue
+                                )),
+                            WtoD(new Point(
+                                (isX) ? currentValue.RealValue : WXMax,
+                                (isX) ? WYMax : currentValue.RealValue
+                                ))
+                        },
+                        StrokeThickness = 1,
+                        Stroke = (currentValue == 0) ? Brushes.Black : Brushes.Gray
+                    };
 
-                TextBlock numberBlock = new TextBlock()
-                {
-                    Text = i.ToString(),
-                    Background = Brushes.WhiteSmoke,
-                    Margin = new Thickness(5),
-                    Padding = new Thickness(0),
-                    FontWeight = FontWeights.Bold
-                };
+                    string numberText;
+                    numberText = $"{currentValue.ToString("0.#")}";
 
-                Thickness padding = new Thickness(0);
-                numberBlock.Padding = padding;
+                    numberBlock = new TextBlock()
+                    {
+                        Text = numberText,
+                        Background = Brushes.WhiteSmoke,
+                        Margin = new Thickness(5),
+                        Padding = new Thickness(0),
+                        FontWeight = FontWeights.Bold
+                    };
 
+                    Point labelPoint = WtoD(new Point(
+                            (isX) ? currentValue.RealValue : 0,
+                            (isX) ? 0 : currentValue.RealValue
+                            ));
+                    if (isX)
+                    {
+                        labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
+                    }
 
-                AddToGraph(numberBlock);
-                Point labelPoint = WtoD(new Point(0, i));
-                Canvas.SetLeft(numberBlock, labelPoint.X);
-                Canvas.SetTop(numberBlock, labelPoint.Y);
-                Canvas.SetZIndex(numberBlock, 7);
+                    if (!(!isX && currentValue == 0))
+                    {
+                        AddToGraph(numberBlock);
+                    }
 
-                AddToGraph(pl);
+                    Canvas.SetLeft(numberBlock, labelPoint.X);
+                    Canvas.SetTop(numberBlock, labelPoint.Y);
+                    Canvas.SetZIndex(numberBlock, 7);
+
+                    AddToGraph(polyline);
+                }
             }
-            for (double i = -delta; i >= Math.Ceiling(WYMin); i -= delta)
-            {
-                points = new PointCollection
-                {
-                    WtoD(new Point(WXMin, i)),
-                    WtoD(new Point(WXMax, i))
-                };
-                pl = new Polyline
-                {
-                    Points = points,
-                    StrokeThickness = 1,
-                    Stroke = Brushes.Gray
-                };
-
-                TextBlock numberBlock = new TextBlock()
-                {
-                    Text = i.ToString(),
-                    Background = Brushes.WhiteSmoke,
-                    Margin = new Thickness(5),
-                    Padding = new Thickness(0),
-                    FontWeight = FontWeights.Bold
-                };
-
-                Thickness padding = new Thickness(0);
-                numberBlock.Padding = padding;
-
-                AddToGraph(numberBlock);
-                Point labelPoint = WtoD(new Point(0, i));
-                Canvas.SetLeft(numberBlock, labelPoint.X);
-                Canvas.SetTop(numberBlock, labelPoint.Y);
-                Canvas.SetZIndex(numberBlock, 7);
-
-                AddToGraph(pl);
-            }
-            points = new PointCollection
-            {
-                WtoD(new Point(WXMin,0)),
-                WtoD(new Point(WXMax,0))
-            };
-            pl = new Polyline
-            {
-                Points = points,
-                StrokeThickness = 1,
-                Stroke = Brushes.Black
-            };
-            AddToGraph(pl);
-            Canvas.SetZIndex(pl, 5);
-        }
-        private void DrawBaseX(double delta)
-        {
-            if (IsPiEnabled)
-            {
-                delta = Math.PI;
-            }
-            PointCollection points;
-            Polyline pl;
-            for (double i = 1; i <= Math.Floor(WXMax)/delta; i += 1)
-            {
-                points = new PointCollection
-                {
-                    WtoD(new Point(i*delta, WYMin)),
-                    WtoD(new Point(i*delta, WYMax))
-                };
-                pl = new Polyline
-                {
-                    Points = points,
-                    StrokeThickness = 1,
-                    Stroke = Brushes.Gray
-                };
-
-                TextBlock numberBlock = new TextBlock()
-                {
-                    Text = (IsPiEnabled)? ((i > 1)? $"{i}π": "π"):$"{i*delta}",
-                    Background = Brushes.WhiteSmoke,
-                    Margin = new Thickness(5),
-                    Padding = new Thickness(0),
-                    FontWeight = FontWeights.Bold
-                };
-
-                AddToGraph(numberBlock);
-                Point labelPoint = WtoD(new Point(i*delta, 0));
-                labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
-                Canvas.SetLeft(numberBlock, labelPoint.X);
-                Canvas.SetTop(numberBlock, labelPoint.Y);
-                Canvas.SetZIndex(numberBlock, 7);
-
-                AddToGraph(pl);
-            }
-            for (double i = -1; i >= Math.Ceiling(WXMin)/delta; i -= 1)
-            {
-                points = new PointCollection
-                {
-                    WtoD(new Point(i*delta, WYMin)),
-                    WtoD(new Point(i*delta, WYMax))
-                };
-                pl = new Polyline
-                {
-                    Points = points,
-                    StrokeThickness = 1,
-                    Stroke = Brushes.Gray
-                };
-
-                TextBlock numberBlock = new TextBlock()
-                {
-                    Text = (IsPiEnabled) ? ((i < -1) ? $"{i}π" : "π") : $"{i * delta}",
-                    Background = Brushes.WhiteSmoke,
-                    Margin = new Thickness(5),
-                    Padding = new Thickness(0),
-                    FontWeight = FontWeights.Bold
-                };
-
-                Thickness padding = new Thickness(0);
-                numberBlock.Padding = padding;
-
-                AddToGraph(numberBlock);
-                Point labelPoint = WtoD(new Point(i*delta, 0));
-                labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
-                Canvas.SetLeft(numberBlock, labelPoint.X);
-                Canvas.SetTop(numberBlock, labelPoint.Y);
-                Canvas.SetZIndex(numberBlock, 7);
-
-                AddToGraph(pl);
-            }
-            points = new PointCollection
-            {
-                WtoD(new Point(0,WYMin)),
-                WtoD(new Point(0,WYMax))
-            };
-            pl = new Polyline
-            {
-                Points = points,
-                StrokeThickness = 1,
-                Stroke = Brushes.Black
-            };
-            AddToGraph(pl);
-            Canvas.SetZIndex(pl, 5);
         }
         private void DrawGraphables()
         {
@@ -281,7 +236,8 @@ namespace MathStudioWpf
             {
                 StrokeThickness = 3,
                 Tag = "funPolGraph",
-                Stroke = color
+                Stroke = color,
+                Opacity = .65
             };
         }
 
@@ -295,10 +251,15 @@ namespace MathStudioWpf
             ZoomLevel--;
         }
 
-        public void Offset(double x, double y)
+        public void Offset(Point dStart, Point dEnd)
         {
-            OffsetX += x;
-            OffsetY -= y;
+            var wStart = DtoW(dStart);
+            var wEnd = DtoW(dEnd);
+
+            var offsetXValue = wStart.X - wEnd.X;
+            var offsetYValue = wStart.Y - wEnd.Y;
+
+            CoordinatesConverter.Offset(offsetXValue, offsetYValue);
         }
 
         private Point WtoD(Point point) => CoordinatesConverter.WtoD(point);

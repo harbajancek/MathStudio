@@ -24,8 +24,17 @@ namespace MathStudioWpf
             GraphablesViewModel = new GraphablesViewModel();
             GraphDrawer.Graph = Graph;
             GraphDrawer.Graphables = GraphablesViewModel.Graphables;
-            
+
             ExpressionsList.DataContext = GraphablesViewModel;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            window_loaded = true;
+            //GraphablesViewModel.Graphables.Add(new ConicSectionModel() { Color = Brushes.Black });
+            PreviewKeyDown += MainWindow_KeyDown;
+
+            Draw();
         }
 
         private void Add_ButtonClick(object sender, RoutedEventArgs e)
@@ -34,30 +43,16 @@ namespace MathStudioWpf
             function.PropertyChanged += FunctionChange_NotifyEvent;
             GraphablesViewModel.Graphables.Add(function);
 
-            GraphDrawer.DrawGraph();
+            Draw();
         }
 
         private void FunctionChange_NotifyEvent(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsGraphable")
             {
-                GraphDrawer.DrawGraph();
+                Draw();
             }
         }
-
-        /*
-        public void DisplayGraphBase()
-        {
-            if (disableGrid)
-            {
-                return;
-            }
-            Polyline pl;
-            PointCollection points;
-
-            float delta = (float)Math.Ceiling(MouseDelta / 5);
-            mouseDeltaDeltaText.Text = delta.ToString();
-            */
 
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -69,25 +64,18 @@ namespace MathStudioWpf
             {
                 GraphDrawer.ZoomIn();
             }
-            GraphDrawer.DrawGraph();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            //GraphablesViewModel.Graphables.Add(new ConicSectionModel() { Color = Brushes.Black });
-            GraphDrawer.DrawGraph();
-            window_loaded = true;
+            Draw();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            GraphDrawer.DrawGraph();
+            Draw();
         }
 
         private void Clear_ButtonClick(object sender, RoutedEventArgs e)
         {
             GraphablesViewModel.Graphables.Clear();
-            GraphDrawer.DrawGraph();
+            Draw();
         }
 
         private void RemoveItem_ButtonClick(object sender, RoutedEventArgs e)
@@ -96,7 +84,7 @@ namespace MathStudioWpf
             FunctionModel function = (FunctionModel)button.DataContext;
 
             GraphablesViewModel.Graphables.Remove(function);
-            GraphDrawer.DrawGraph();
+            Draw();
         }
 
         public static IEnumerable<Point> GetIntersectionPoints(PointCollection points1, PointCollection points2)
@@ -113,9 +101,9 @@ namespace MathStudioWpf
             }
             var currentPosition = e.GetPosition(Graph);
 
-            GraphDrawer.Offset(MousePosition.X - currentPosition.X, MousePosition.Y - currentPosition.Y);
+            GraphDrawer.Offset(MousePosition, currentPosition);
             MousePosition = currentPosition;
-            GraphDrawer.DrawGraph();
+            Draw();
         }
 
         private void Graph_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -126,7 +114,43 @@ namespace MathStudioWpf
         private void PICheckbox_Checked(object sender, RoutedEventArgs e)
         {
             GraphDrawer.IsPiEnabled = (bool)PICheckbox.IsChecked;
-            GraphDrawer.DrawGraph();
+            Draw();
+        }
+
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Left)
+            {
+                GraphDrawer.Offset(new Point(0, 0), new Point(1000, 0));
+            }
+            if (e.Key == Key.Right)
+            {
+                GraphDrawer.Offset(new Point(0, 0), new Point(-1000, 0));
+            }
+            if (e.Key == Key.Up)
+            {
+                GraphDrawer.Offset(new Point(0, 0), new Point(0, 1000));
+            }
+            if (e.Key == Key.Down)
+            {
+                GraphDrawer.Offset(new Point(0, 0), new Point(0, -1000));
+            }
+            if (e.Key == Key.Enter)
+            {
+                Keyboard.ClearFocus();
+                Focus();
+                e.Handled = true;
+            }
+
+            Draw();
+        }
+
+        private void Draw()
+        {
+            if (window_loaded)
+            {
+                GraphDrawer.DrawGraph();
+            }
         }
     }
 }

@@ -9,14 +9,15 @@ namespace MathStudioWpf
     class CoordinatesConverter
     {
         public int ZoomLevel { get; set; }
-        public double OffsetX { get; set; } = 0;
-        public double OffsetY { get; set; } = 0;
+        private double OffsetX { get; set; } = 0;
+        private double OffsetY { get; set; } = 0;
 
         private double zoomValue
         {
             get
             {
-                return Math.Pow(1.05, ZoomLevel) * 10;
+                var returnValue = Math.Pow(Math.E, 1d / 20d * ZoomLevel) * 10;
+                return returnValue;
             }
         }
 
@@ -49,8 +50,7 @@ namespace MathStudioWpf
 
             WtoDMatrix.Translate(OffsetX, OffsetY);
 
-
-            // Make DtoW.
+            // Make DtoW
             DtoWMatrix = WtoDMatrix;
             DtoWMatrix.Invert();
 
@@ -81,11 +81,17 @@ namespace MathStudioWpf
             }
         }
 
-        public double GetWXMax() => WXMax * 1.1;
-        public double GetWXMin() => WXMin * 1.1;
-        public double GetWYMax() => WYMax * 1.1;
-        public double GetWYMin() => WYMin * 1.1;
+        public double GetWXMax() => WXMax + zoomValue;
+        public double GetWXMin() => WXMin - zoomValue;
+        public double GetWYMax() => WYMax + zoomValue;
+        public double GetWYMin() => WYMin - zoomValue;
 
         public double GetPixelWidth() => pixelWidth / 2;
+
+        public void Offset(double offsetX, double offsetY)
+        {
+            OffsetX -= (offsetX / zoomValue) * 10;
+            OffsetY += (offsetY / zoomValue) * 10;
+        }
     }
 }

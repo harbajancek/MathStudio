@@ -33,7 +33,7 @@
             <StackPanel Grid.Column="2" Background="White" VerticalAlignment="Bottom">
                 <Button Style="{StaticResource DefaultButton}" Margin="5" Content="Smazat všechny" Click="Clear_ButtonClick"/>
                 <StackPanel Margin="5">
-                    <CheckBox x:Name="PICheckbox" Content="π x-mřížka" Checked="PICheckbox_Checked" Unchecked="PICheckbox_Checked"/>
+                    <CheckBox FontSize="15" x:Name="PICheckbox" Content="π x-mřížka" Checked="PICheckbox_Checked" Unchecked="PICheckbox_Checked"/>
                 </StackPanel>
             </StackPanel>
             <!--<Button Content="Create new expression" Click="Button_Click"/>-->
