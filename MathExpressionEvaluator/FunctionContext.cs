@@ -10,7 +10,14 @@ namespace MathExpressionEvaluator
 
         public double ResolveVariable(string name)
         {
-            return Variable;
+            if (name == "x" || name == "X")
+            {
+                return Variable;
+            }
+            else
+            {
+                return double.NaN;
+            }
         }
     }
 }

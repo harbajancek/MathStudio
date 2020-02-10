@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MathStudioWpf"
         mc:Ignorable="d"
         Title="Math Studio"
-        WindowState="Maximized"
+        WindowState="Normal"
         Height="450"
         Width="800"
         Background="WhiteSmoke"
@@ -44,7 +44,7 @@
                     <StackPanel Width="200">
                         <ItemsControl HorizontalAlignment="Stretch" x:Name="ExpressionsList" ItemsSource="{Binding Graphables}">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate DataType="FunctionModel">
                                     <Border HorizontalAlignment="Stretch" Background="WhiteSmoke">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -56,8 +56,8 @@
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
-
                             </ItemsControl.ItemTemplate>
+                            <ItemsControl.Resources></ItemsControl.Resources>
 
                         </ItemsControl>
                         <Button Content="+" FontWeight="SemiBold" Padding="0" HorizontalAlignment="Left" FontSize="30" Width="50" Height="50" Style="{StaticResource DefaultButton}" Margin="5" Click="Add_ButtonClick"/>

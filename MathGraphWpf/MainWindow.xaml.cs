@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,6 +16,9 @@ namespace MathStudioWpf
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Point previousPosition = new Point();
+        private bool wasPressed = false;
+
         private GraphDrawer GraphDrawer { get; set; } = new GraphDrawer();
         private bool window_loaded { get; set; } = false;
 
@@ -24,19 +29,50 @@ namespace MathStudioWpf
             GraphablesViewModel = new GraphablesViewModel();
             GraphDrawer.Graph = Graph;
             GraphDrawer.Graphables = GraphablesViewModel.Graphables;
+            Focusable = true;
 
             ExpressionsList.DataContext = GraphablesViewModel;
-
-            GraphablesViewModel.Graphables.Add(new FunctionModel());
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             window_loaded = true;
-            //GraphablesViewModel.Graphables.Add(new ConicSectionModel() { Color = Brushes.Black });
             PreviewKeyDown += MainWindow_KeyDown;
 
+            FunctionModel function = new FunctionModel();
+            function.PropertyChanged += FunctionChange_NotifyEvent;
+            GraphablesViewModel.Graphables.Add(function);
+
             Draw();
+            Keyboard.Focus(this);
+            
+            MouseLeftButtonDown += Graph_MouseLeftButtonDown;
+        }
+
+        private void Timer_Tick(object sender, ElapsedEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                if (!wasPressed)
+                {
+                    wasPressed = true;
+                    return;
+                }
+            }
+            else
+            {
+                wasPressed = false;
+            }
+
+            Point newPosition = Mouse.GetPosition(Graph);
+            if (previousPosition != new Point(0, 0))
+            {
+                GraphDrawer.Offset(previousPosition, newPosition);
+                Draw();
+            }
+
+            previousPosition = newPosition;
+
         }
 
         private void Add_ButtonClick(object sender, RoutedEventArgs e)
@@ -95,13 +131,24 @@ namespace MathStudioWpf
         }
 
         private Point MousePosition { get; set; }
+        private bool isCaptured { get; set; }
         private void Graph_MouseMove(object sender, MouseEventArgs e)
         {
+            var currentPosition = e.GetPosition(Graph);
+
             if (e.LeftButton == MouseButtonState.Released)
             {
+                Mouse.Capture(null);
+                isCaptured = false;
                 return;
             }
-            var currentPosition = e.GetPosition(Graph);
+            if (!isCaptured)
+            {
+                Mouse.Capture(Graph);
+                isCaptured = true;
+                MousePosition = currentPosition;
+                return;
+            }
 
             GraphDrawer.Offset(MousePosition, currentPosition);
             MousePosition = currentPosition;
@@ -111,6 +158,8 @@ namespace MathStudioWpf
         private void Graph_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             MousePosition = e.GetPosition(Graph);
+            Mouse.Capture(Graph);
+            isCaptured = true;
         }
 
         private void PICheckbox_Checked(object sender, RoutedEventArgs e)
@@ -121,27 +170,18 @@ namespace MathStudioWpf
 
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Left)
-            {
-                GraphDrawer.Offset(new Point(0, 0), new Point(1000, 0));
-            }
-            if (e.Key == Key.Right)
-            {
-                GraphDrawer.Offset(new Point(0, 0), new Point(-1000, 0));
-            }
-            if (e.Key == Key.Up)
-            {
-                GraphDrawer.Offset(new Point(0, 0), new Point(0, 1000));
-            }
-            if (e.Key == Key.Down)
-            {
-                GraphDrawer.Offset(new Point(0, 0), new Point(0, -1000));
-            }
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Escape)
             {
                 Keyboard.ClearFocus();
-                Focus();
-                e.Handled = true;
+                bool boolX = Keyboard.FocusedElement is TextBox;
+                if (boolX)
+                {
+                    Console.WriteLine("true");
+                }
+                else
+                {
+                    Console.WriteLine("false");
+                }
             }
 
             Draw();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -256,14 +257,16 @@ namespace MathStudioWpf
             var wStart = DtoW(dStart);
             var wEnd = DtoW(dEnd);
 
-            var offsetXValue = wStart.X - wEnd.X;
-            var offsetYValue = wStart.Y - wEnd.Y;
+            var offsetXValue = (wStart.X - wEnd.X) * 40;
+            var offsetYValue = (wStart.Y - wEnd.Y) * 40;
+
+            Debug.Write($"{offsetXValue},\n{offsetYValue}\n\n");
 
             CoordinatesConverter.Offset(offsetXValue, offsetYValue);
         }
 
-        private Point WtoD(Point point) => CoordinatesConverter.WtoD(point);
-        private Point DtoW(Point point) => CoordinatesConverter.DtoW(point);
+        internal Point WtoD(Point point) => CoordinatesConverter.WtoD(point);
+        internal Point DtoW(Point point) => CoordinatesConverter.DtoW(point);
 
         private void AddToGraph(FrameworkElement element)
         {
