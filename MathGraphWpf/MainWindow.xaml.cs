@@ -39,13 +39,11 @@ namespace MathStudioWpf
             window_loaded = true;
             PreviewKeyDown += MainWindow_KeyDown;
 
-            FunctionModel function = new FunctionModel();
-            function.PropertyChanged += FunctionChange_NotifyEvent;
-            GraphablesViewModel.Graphables.Add(function);
+            AppendToGraphables(new FunctionModel());
 
             Draw();
             Keyboard.Focus(this);
-            
+
             MouseLeftButtonDown += Graph_MouseLeftButtonDown;
         }
 
@@ -78,10 +76,22 @@ namespace MathStudioWpf
         private void Add_ButtonClick(object sender, RoutedEventArgs e)
         {
             FunctionModel function = new FunctionModel();
-            function.PropertyChanged += FunctionChange_NotifyEvent;
-            GraphablesViewModel.Graphables.Add(function);
+            AppendToGraphables(function);
 
             Draw();
+        }
+
+        private void AppendToGraphables(IGraphable graphable)
+        {
+            GraphablesViewModel.Graphables.Add(graphable);
+            graphable.PropertyChanged += FunctionChange_NotifyEvent;
+        }
+
+        private void ReplaceInGraphables(int index, IGraphable graphable)
+        {
+            GraphablesViewModel.Graphables.RemoveAt(index);
+            GraphablesViewModel.Graphables.Insert(index, graphable);
+            graphable.PropertyChanged += FunctionChange_NotifyEvent;
         }
 
         private void FunctionChange_NotifyEvent(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -119,9 +129,20 @@ namespace MathStudioWpf
         private void RemoveItem_ButtonClick(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            FunctionModel function = (FunctionModel)button.DataContext;
+            IGraphable function = (IGraphable)button.DataContext;
 
             GraphablesViewModel.Graphables.Remove(function);
+            Draw();
+        }
+
+        private void ReplaceItem_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            IGraphable function = (IGraphable)button.DataContext;
+
+            
+            int index = GraphablesViewModel.Graphables.IndexOf(function);
+            ReplaceInGraphables(index, new FunctionModel());
             Draw();
         }
 

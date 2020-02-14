@@ -68,7 +68,7 @@ namespace MathStudioWpf
             }
             else if (delta < i)
             {
-                while (delta <= i/10)
+                while (delta <= i / 10)
                 {
                     delta *= i;
                     decimalPoint /= 10;
@@ -183,8 +183,8 @@ namespace MathStudioWpf
                     };
 
                     Point labelPoint = WtoD(new Point(
-                            (isX) ? currentValue.RealValue : 0,
-                            (isX) ? 0 : currentValue.RealValue
+                            (isX) ? (currentValue.RealValue > WXMax) ? WXMax : (currentValue.RealValue < WXMin) ? WXMin : currentValue.RealValue : 0,
+                            (isX) ? 0 : (currentValue.RealValue > WYMax) ? WYMax : (currentValue.RealValue < WYMin) ? WYMin : currentValue.RealValue
                             ));
                     if (isX)
                     {

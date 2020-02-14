@@ -14,8 +14,34 @@
         Loaded="Window_Loaded"
         SizeChanged="Window_SizeChanged">
     <Window.Resources>
-        <Style x:Key="DefaultButton" TargetType="Button">
-            <Setter Property="FontSize" Value="18"/>
+        <Style x:Key="DefaultButtonBase" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="{TemplateBinding Border.CornerRadius}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter x:Name="contentPresenter"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}" 
+                                      Content="{TemplateBinding Content}" 
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      Margin="{TemplateBinding Padding}" 
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DefaultButton" TargetType="Button" BasedOn="{StaticResource DefaultButtonBase}">
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Border.CornerRadius" Value="10"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="WhiteSmoke"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
     <Grid>
@@ -45,14 +71,28 @@
                         <ItemsControl HorizontalAlignment="Stretch" x:Name="ExpressionsList" ItemsSource="{Binding Graphables}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="FunctionModel">
-                                    <Border HorizontalAlignment="Stretch" Background="WhiteSmoke">
+                                    <Border HorizontalAlignment="Stretch">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto"/>
                                                 <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="30"/>
+                                                <ColumnDefinition Width="auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0" Padding="10" Text="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16"/>
-                                            <Button Grid.Column="1" Content="X" Padding="7" Click="RemoveItem_ButtonClick"/>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto"/>
+                                                <RowDefinition Height="auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Button Content="ahoj"/>
+                                            <TextBox Grid.Column="1" Padding="10" Text="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16"/>
+                                            <Button Grid.Column="2" Content="X" Padding="7" Click="RemoveItem_ButtonClick"/>
+                                            <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="3" Padding="5" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Background="WhiteSmoke">
+                                                <StackPanel>
+                                                    <CheckBox/>
+                                                    <CheckBox/>
+                                                    <CheckBox/>
+                                                </StackPanel>
+                                            </Border>
+                                            
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -60,7 +100,11 @@
                             <ItemsControl.Resources></ItemsControl.Resources>
 
                         </ItemsControl>
-                        <Button Content="+" FontWeight="SemiBold" Padding="0" HorizontalAlignment="Left" FontSize="30" Width="50" Height="50" Style="{StaticResource DefaultButton}" Margin="5" Click="Add_ButtonClick"/>
+                        <Button HorizontalAlignment="Left" Width="50" Height="50" Style="{StaticResource DefaultButton}" Margin="5" Click="Add_ButtonClick">
+                            <Button.Content>
+                                <TextBlock Text="+" FontSize="30" FontWeight="SemiBold" Foreground="DarkSlateGray"/>
+                            </Button.Content>
+                        </Button>
                     </StackPanel>
                 </ScrollViewer>
             </StackPanel>
