@@ -11,6 +11,7 @@ namespace MathStudioWpf
     interface IGraphable : INotifyPropertyChanged
     {
         bool IsGraphable { get; set; }
+        GraphableType Type { get; }
         IEnumerable<IEnumerable<Point>> GetGraphPoints(double xmax, double ymax, double xmin, double ymin, double dx);
         Brush Color { get; set; }
     }

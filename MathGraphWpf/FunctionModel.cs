@@ -13,6 +13,14 @@ namespace MathStudioWpf
 {
     class FunctionModel : IGraphable
     {
+        public GraphableType Type
+        {
+            get
+            {
+                return GraphableType.Function;
+            }
+        }
+
         private string expressionString;
         private bool isGraphable;
 

@@ -10,17 +10,27 @@ using System.Windows.Media;
 
 namespace MathStudioWpf
 {
-    /*
+ 
     class ConicSectionModel : IGraphable
     {
+        public GraphableType Type
+        {
+            get
+            {
+                return GraphableType.ConicSection;
+            }
+        }
+        private bool isGraphable;
         public bool IsGraphable
         {
             get
             {
-                return true;
+                return isGraphable;
             }
             set
             {
+                isGraphable = value;
+                NotifyPropertyChanged();
             }
         }
         public Brush Color { get; set; }
@@ -34,8 +44,12 @@ namespace MathStudioWpf
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public IEnumerable<Polyline> GetGraphPoints(float xmax, float ymax, float xmin, float ymin, float dx)
+        public IEnumerable<IEnumerable<Point>> GetGraphPoints(double xmax, double ymax, double xmin, double ymin, double dx)
         {
+            List<Point> points = new List<Point>();
+
+            yield return points;
+            /*
             List<PointCollection> pointCollections = new List<PointCollection>();
             PointCollection points = new PointCollection();
             List<Node> nodeExpressions = new List<Node>(); 
@@ -137,7 +151,8 @@ namespace MathStudioWpf
             }
             
             return pointCollections;
+            */
         }
     }
-    */
+    
 }

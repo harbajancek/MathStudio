@@ -24,13 +24,13 @@ namespace MathStudioWpf
                 CoordinatesConverter.ZoomLevel = value;
             }
         }
-        double WXMax { get => CoordinatesConverter.GetWXMax(); }
-        double WXMin { get => CoordinatesConverter.GetWXMin(); }
-        double WYMax { get => CoordinatesConverter.GetWYMax(); }
-        double WYMin { get => CoordinatesConverter.GetWYMin(); }
+        internal double WXMax { get => CoordinatesConverter.GetWXMax(); }
+        internal double WXMin { get => CoordinatesConverter.GetWXMin(); }
+        internal double WYMax { get => CoordinatesConverter.GetWYMax(); }
+        internal double WYMin { get => CoordinatesConverter.GetWYMin(); }
         public IEnumerable<IGraphable> Graphables { get; set; }
         public Canvas Graph { get; set; }
-        CoordinatesConverter CoordinatesConverter { get; set; } = new CoordinatesConverter();
+        private CoordinatesConverter CoordinatesConverter { get; set; } = new CoordinatesConverter();
 
         public void DrawGraph()
         {
@@ -182,19 +182,25 @@ namespace MathStudioWpf
                         FontWeight = FontWeights.Bold
                     };
 
-                    Point labelPoint = WtoD(new Point(
-                            (isX) ? (currentValue.RealValue > WXMax) ? WXMax : (currentValue.RealValue < WXMin) ? WXMin : currentValue.RealValue : 0,
-                            (isX) ? 0 : (currentValue.RealValue > WYMax) ? WYMax : (currentValue.RealValue < WYMin) ? WYMin : currentValue.RealValue
-                            ));
-                    if (isX)
-                    {
-                        labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
-                    }
-
                     if (!(!isX && currentValue == 0))
                     {
                         AddToGraph(numberBlock);
                     }
+
+                    double blockHeight = numberBlock.LineHeight;
+                    double blockWidth = numberBlock.FontSize + numberBlock.Margin.Right + numberBlock.Margin.Left;
+
+                    Point labelPoint = WtoD(new Point(
+                            (isX) ? currentValue.RealValue : (WXMin > 0) ? WXMin : (WXMax < 0) ? WXMax : 0,
+                            (isX) ? (WYMin > 0) ? WYMin : (WYMax < 0) ? WYMax : 0 : currentValue.RealValue
+                            ));
+
+                    // TODO pokud maxx < 0 || maxy < 0 zmenit aby numberblock sel videt
+                    //labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;
+                    //if (labelPoint.X < WXMin)
+                    //{
+                    //    labelPoint.X = WXMin;
+                    //}
 
                     Canvas.SetLeft(numberBlock, labelPoint.X);
                     Canvas.SetTop(numberBlock, labelPoint.Y);
@@ -252,17 +258,27 @@ namespace MathStudioWpf
             ZoomLevel--;
         }
 
-        public void Offset(Point dStart, Point dEnd)
+        public void OffsetMouse(Point dStart, Point dEnd)
         {
             var wStart = DtoW(dStart);
             var wEnd = DtoW(dEnd);
 
-            var offsetXValue = (wStart.X - wEnd.X) * 40;
-            var offsetYValue = (wStart.Y - wEnd.Y) * 40;
+            var offsetXValue = (wStart.X - wEnd.X);
+            var offsetYValue = (wStart.Y - wEnd.Y);
 
             Debug.Write($"{offsetXValue},\n{offsetYValue}\n\n");
 
             CoordinatesConverter.Offset(offsetXValue, offsetYValue);
+        }
+
+        public void Offset(double x, double y)
+        {
+            CoordinatesConverter.Offset(x, y);
+        }
+
+        public void Reset()
+        {
+            CoordinatesConverter.Reset();
         }
 
         internal Point WtoD(Point point) => CoordinatesConverter.WtoD(point);

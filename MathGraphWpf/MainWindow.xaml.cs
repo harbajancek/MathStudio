@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -65,7 +67,7 @@ namespace MathStudioWpf
             Point newPosition = Mouse.GetPosition(Graph);
             if (previousPosition != new Point(0, 0))
             {
-                GraphDrawer.Offset(previousPosition, newPosition);
+                GraphDrawer.OffsetMouse(previousPosition, newPosition);
                 Draw();
             }
 
@@ -137,13 +139,21 @@ namespace MathStudioWpf
 
         private void ReplaceItem_ButtonClick(object sender, RoutedEventArgs e)
         {
-            Button button = (Button)sender;
-            IGraphable function = (IGraphable)button.DataContext;
+            FrameworkElement element = (FrameworkElement)sender;
+            IGraphable graphable = (IGraphable)element.DataContext;
 
-            
-            int index = GraphablesViewModel.Graphables.IndexOf(function);
-            ReplaceInGraphables(index, new FunctionModel());
+            IGraphable newGraphable = element.Tag switch
+            {
+                "ConicSection" => new ConicSectionModel(),
+                "Line" => new LineModel(),
+                _ => new FunctionModel()
+            };
+
+            int index = GraphablesViewModel.Graphables.IndexOf(graphable);
+            ReplaceInGraphables(index, newGraphable);
             Draw();
+
+            ToggleVisibility(GetParentOf(GetParentOf(element)));
         }
 
         public static IEnumerable<Point> GetIntersectionPoints(PointCollection points1, PointCollection points2)
@@ -171,7 +181,7 @@ namespace MathStudioWpf
                 return;
             }
 
-            GraphDrawer.Offset(MousePosition, currentPosition);
+            GraphDrawer.OffsetMouse(MousePosition, currentPosition);
             MousePosition = currentPosition;
             Draw();
         }
@@ -204,8 +214,6 @@ namespace MathStudioWpf
                     Console.WriteLine("false");
                 }
             }
-
-            Draw();
         }
 
         private void Draw()
@@ -213,7 +221,41 @@ namespace MathStudioWpf
             if (window_loaded)
             {
                 GraphDrawer.DrawGraph();
+                //OffsetTextBlock.Text = $"Offset:\nX: {GraphDrawer.CoordinatesConverter.OffsetX}\nY: {GraphDrawer.CoordinatesConverter.OffsetY}";
+                //Point center = GraphDrawer.DtoW(new Point(Graph.ActualWidth/2,Graph.ActualHeight/2));
+                //CenterPoint.Text = $"Center probably:\nX: {center.X}\nY: {center.Y}";
+                WMaxsMins.Text = $"WXMax: {GraphDrawer.WXMax}\nWXmin: {GraphDrawer.WXMin}\nWYMax: {GraphDrawer.WYMax}\nWYMin: {GraphDrawer.WYMin}";
             }
+        }
+
+        private void ResetMatrix_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            GraphDrawer.Reset();
+            Draw();
+        }
+
+        private void ToggleChangeVisibility_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            var fSender = (Button)sender;
+            var parent = (Panel)fSender.Parent;
+
+            foreach (FrameworkElement item in parent.Children)
+            {
+                if ((string)item.Tag == "GraphableChange")
+                {
+                    ToggleVisibility(item);
+                }
+            }
+        }
+
+        private void ToggleVisibility(FrameworkElement element)
+        {
+            element.Visibility = (element.Visibility == Visibility.Visible) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private FrameworkElement GetParentOf(FrameworkElement element)
+        {
+            return (FrameworkElement)element.Parent;
         }
     }
 }

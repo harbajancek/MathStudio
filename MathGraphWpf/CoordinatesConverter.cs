@@ -38,17 +38,18 @@ namespace MathStudioWpf
             double wxValue = zoomValue * difference;
             double wyValue = zoomValue;
 
-            WtoDMatrix.Translate(wxValue, wyValue);
-
-
             double xscale = (dxmax) / (2 * wxValue);
             double yscale = (-dymax) / (2 * wyValue);
+
+            WtoDMatrix.Translate(wxValue, wyValue);
+
+            WtoDMatrix.Translate(-OffsetX, -OffsetY);
 
             WtoDMatrix.Scale(xscale, yscale);
 
             WtoDMatrix.Translate(0, dymax);
 
-            WtoDMatrix.Translate(OffsetX, OffsetY);
+            
 
             // Make DtoW
             DtoWMatrix = WtoDMatrix;
@@ -81,17 +82,24 @@ namespace MathStudioWpf
             }
         }
 
-        public double GetWXMax() => WXMax + zoomValue;
-        public double GetWXMin() => WXMin - zoomValue;
-        public double GetWYMax() => WYMax + zoomValue;
-        public double GetWYMin() => WYMin - zoomValue;
+        public double GetWXMax() => WXMax;
+        public double GetWXMin() => WXMin;
+        public double GetWYMax() => WYMax;
+        public double GetWYMin() => WYMin;
 
         public double GetPixelWidth() => pixelWidth / 2;
 
         public void Offset(double offsetX, double offsetY)
         {
-            OffsetX -= (offsetX / zoomValue) * 10;
-            OffsetY += (offsetY / zoomValue) * 10;
+            OffsetX += offsetX;
+            OffsetY += offsetY;
+        }
+
+        public void Reset()
+        {
+            OffsetX = 0;
+            OffsetY = 0;
+            ZoomLevel = default;
         }
     }
 }

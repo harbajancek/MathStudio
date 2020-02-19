@@ -111,6 +111,15 @@ namespace MathStudioWpf
         {
             return RealValue.Equals(other.RealValue);
         }
+        public override bool Equals([AllowNull] object obj)
+        {
+            return base.Equals(obj);
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public string ToString(string format, IFormatProvider formatProvider)
         {
             string numerator;

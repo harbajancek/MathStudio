@@ -57,9 +57,11 @@
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="2" Background="White" VerticalAlignment="Bottom">
-                <Button Style="{StaticResource DefaultButton}" Margin="5" Content="Smazat všechny" Click="Clear_ButtonClick"/>
+                <Button Style="{StaticResource DefaultButton}" Margin="5" Content="Vymazat vše" Click="Clear_ButtonClick"/>
+                <Button Style="{StaticResource DefaultButton}" Margin="5" Content="Obnovit mřížku" Click="ResetMatrix_ButtonClick"/>
                 <StackPanel Margin="5">
                     <CheckBox FontSize="15" x:Name="PICheckbox" Content="π x-mřížka" Checked="PICheckbox_Checked" Unchecked="PICheckbox_Checked"/>
+                    <TextBlock x:Name="WMaxsMins"/>
                 </StackPanel>
             </StackPanel>
             <!--<Button Content="Create new expression" Click="Button_Click"/>-->
@@ -82,17 +84,38 @@
                                                 <RowDefinition Height="auto"/>
                                                 <RowDefinition Height="auto"/>
                                             </Grid.RowDefinitions>
-                                            <Button Content="ahoj"/>
-                                            <TextBox Grid.Column="1" Padding="10" Text="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16"/>
-                                            <Button Grid.Column="2" Content="X" Padding="7" Click="RemoveItem_ButtonClick"/>
-                                            <Border Grid.Row="1" Grid.ColumnSpan="3" Margin="3" Padding="5" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Background="WhiteSmoke">
+                                            <Button Content="grr" Click="ToggleChangeVisibility_ButtonClick"/>
+
+                                            <TextBox Grid.Column="1"
+                                                     Padding="10"
+                                                     FontSize="16">
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.Function}">
+                                                                <Setter Property="Text" Value="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.ConicSection}">
+                                                                <Setter Property="Text" Value="ahojjjj"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.Line}">
+                                                                <Setter Property="Text" Value="nazdaaaaar"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
+                                                <Button Grid.Column="2" Content="X" Padding="7" Click="RemoveItem_ButtonClick"/>
+                                            <Border Tag="GraphableChange" Visibility="Collapsed"
+                                                    Grid.Row="1" Grid.ColumnSpan="3"
+                                                    Margin="3" Padding="5"
+                                                    BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Background="WhiteSmoke">
                                                 <StackPanel>
-                                                    <CheckBox/>
-                                                    <CheckBox/>
-                                                    <CheckBox/>
+                                                    <Button Content="Funkce" Tag="Function" Click="ReplaceItem_ButtonClick"/>
+                                                    <Button Content="Kuželosečka" Tag="ConicSection" Click="ReplaceItem_ButtonClick"/>
+                                                    <Button Content="Přímka" Tag="Line" Click="ReplaceItem_ButtonClick"/>
                                                 </StackPanel>
                                             </Border>
-                                            
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
