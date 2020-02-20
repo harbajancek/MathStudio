@@ -145,7 +145,9 @@ namespace MathStudioWpf
             IGraphable newGraphable = element.Tag switch
             {
                 "ConicSection" => new ConicSectionModel(),
-                "Line" => new LineModel(),
+                "LineParametric" => new LineParametricModel(),
+                "TwoPoints" => new TwoPointsModel(),
+                "ThreePoints" => new ThreePointsModel(),
                 _ => new FunctionModel()
             };
 

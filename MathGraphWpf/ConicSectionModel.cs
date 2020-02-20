@@ -13,13 +13,7 @@ namespace MathStudioWpf
  
     class ConicSectionModel : IGraphable
     {
-        public GraphableType Type
-        {
-            get
-            {
-                return GraphableType.ConicSection;
-            }
-        }
+        public GraphableType Type => GraphableType.ConicSection;
         private bool isGraphable;
         public bool IsGraphable
         {
@@ -44,7 +38,7 @@ namespace MathStudioWpf
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        public IEnumerable<IEnumerable<Point>> GetGraphPoints(double xmax, double ymax, double xmin, double ymin, double dx)
+        public IEnumerable<IEnumerable<Point>> GetGraphPoints()
         {
             List<Point> points = new List<Point>();
 

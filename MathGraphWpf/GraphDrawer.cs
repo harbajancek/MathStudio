@@ -13,17 +13,6 @@ namespace MathStudioWpf
     {
         public bool IsPiEnabled { get; set; }
 
-        private int ZoomLevel
-        {
-            get
-            {
-                return CoordinatesConverter.ZoomLevel;
-            }
-            set
-            {
-                CoordinatesConverter.ZoomLevel = value;
-            }
-        }
         internal double WXMax { get => CoordinatesConverter.GetWXMax(); }
         internal double WXMin { get => CoordinatesConverter.GetWXMin(); }
         internal double WYMax { get => CoordinatesConverter.GetWYMax(); }
@@ -31,12 +20,27 @@ namespace MathStudioWpf
         public IEnumerable<IGraphable> Graphables { get; set; }
         public Canvas Graph { get; set; }
         private CoordinatesConverter CoordinatesConverter { get; set; } = new CoordinatesConverter();
+        private int GetZoomLevel()
+        {
+            return CoordinatesConverter.ZoomLevel;
+        }
+
+        private void SetZoomLevel(int value)
+        {
+            CoordinatesConverter.ZoomLevel = value;
+        }
 
         public void DrawGraph()
         {
             double dxmax = Graph.ActualWidth;
             double dymax = Graph.ActualHeight;
             CoordinatesConverter.PrepareMatrix(dxmax, dymax);
+
+            ExpressionGrapher.XMax = WXMax;
+            ExpressionGrapher.XMin = WXMin;
+            ExpressionGrapher.YMax = WYMax;
+            ExpressionGrapher.YMin = WYMin;
+            ExpressionGrapher.PixelWidth = CoordinatesConverter.GetPixelWidth();
 
             ClearGraph();
 
@@ -221,12 +225,7 @@ namespace MathStudioWpf
                 {
                     continue;
                 }
-                foreach (var points in item.GetGraphPoints(
-                    CoordinatesConverter.GetWXMax(),
-                    CoordinatesConverter.GetWYMax(),
-                    CoordinatesConverter.GetWXMin(),
-                    CoordinatesConverter.GetWYMin(),
-                    CoordinatesConverter.GetPixelWidth()))
+                foreach (var points in item.GetGraphPoints())
                 {
                     var polyline = GetNewPolyline(color);
                     polyline.Points = new PointCollection(CoordinatesConverter.WtoDRange(points));
@@ -250,12 +249,12 @@ namespace MathStudioWpf
 
         public void ZoomIn()
         {
-            ZoomLevel++;
+            SetZoomLevel(GetZoomLevel() + 1);
         }
 
         public void ZoomOut()
         {
-            ZoomLevel--;
+            SetZoomLevel(GetZoomLevel() - 1);
         }
 
         public void OffsetMouse(Point dStart, Point dEnd)
@@ -265,8 +264,6 @@ namespace MathStudioWpf
 
             var offsetXValue = (wStart.X - wEnd.X);
             var offsetYValue = (wStart.Y - wEnd.Y);
-
-            Debug.Write($"{offsetXValue},\n{offsetYValue}\n\n");
 
             CoordinatesConverter.Offset(offsetXValue, offsetYValue);
         }

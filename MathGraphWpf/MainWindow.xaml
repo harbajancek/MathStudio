@@ -52,7 +52,7 @@
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition MinWidth="200"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
@@ -64,20 +64,17 @@
                     <TextBlock x:Name="WMaxsMins"/>
                 </StackPanel>
             </StackPanel>
-            <!--<Button Content="Create new expression" Click="Button_Click"/>-->
             <StackPanel Grid.Column="0">
-                
-                <!--<TextBlock x:Name="ErrorMessage" Foreground="Red" Visibility="Visible" FontSize="15" TextWrapping="Wrap"/>-->
                 <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
-                    <StackPanel Width="200">
+                    <StackPanel>
                         <ItemsControl HorizontalAlignment="Stretch" x:Name="ExpressionsList" ItemsSource="{Binding Graphables}">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="FunctionModel">
+                                <DataTemplate DataType="IGraphable">
                                     <Border HorizontalAlignment="Stretch">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="auto"/>
-                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="auto"/>
                                                 <ColumnDefinition Width="auto"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
@@ -86,7 +83,116 @@
                                             </Grid.RowDefinitions>
                                             <Button Content="grr" Click="ToggleChangeVisibility_ButtonClick"/>
 
-                                            <TextBox Grid.Column="1"
+                                            <ContentControl Grid.Column="1" HorizontalAlignment="Stretch" MinWidth="200">
+                                                <ContentControl.Style>
+                                                    <Style TargetType="ContentControl">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:GraphableType.Function}">
+                                                                <Setter Property="Content" Value="{Binding}"/>
+                                                                <Setter Property="ContentTemplate">
+                                                                    <Setter.Value>
+                                                                        <DataTemplate>
+                                                                            <Grid Background="WhiteSmoke" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="auto"/>
+                                                                                    <ColumnDefinition Width="*"/>
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <TextBlock Grid.Column="0"
+                                                                                           Text="y = "
+                                                                                           Padding="10"
+                                                                                           FontSize="16"/> 
+                                                                                <TextBox Grid.Column="1"
+                                                                                         Padding="10"
+                                                                                         FontSize="16"
+                                                                                         Text="{Binding Path=ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                                         />
+                                                                            </Grid>
+                                                                        </DataTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.ConicSection}">
+                                                                <Setter Property="Content" Value="{Binding}"/>
+                                                                <Setter Property="ContentTemplate">
+                                                                    <Setter.Value>
+                                                                        <DataTemplate>
+                                                                            <Grid Background="WhiteSmoke" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                                                <TextBox Grid.Column="1"
+                                                                                         Padding="10"
+                                                                                         FontSize="16"
+                                                                                         Text="Not there yet" />
+                                                                            </Grid>
+                                                                        </DataTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.LineParametric}">
+                                                                <Setter Property="Content" Value="{Binding}"/>
+                                                                <Setter Property="ContentTemplate">
+                                                                    <Setter.Value>
+                                                                        <DataTemplate>
+                                                                            <Grid Background="WhiteSmoke" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="auto"/>
+                                                                                    <ColumnDefinition Width="auto"/>
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                </Grid.RowDefinitions>
+                                                                                <Grid.Resources>
+                                                                                    <Style TargetType="TextBlock">
+                                                                                        <Setter Property="Padding" Value="10"/>
+                                                                                        <Setter Property="FontSize" Value="16"/>
+                                                                                    </Style>
+                                                                                    <Style TargetType="TextBox">
+                                                                                        <Setter Property="Padding" Value="10"/>
+                                                                                        <Setter Property="FontSize" Value="16"/>
+                                                                                    </Style>
+                                                                                </Grid.Resources>
+                                                                                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+                                                                                    <TextBlock Text="x = "/>
+                                                                                    <TextBox Text="{Binding Path=X1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                                    <TextBlock Text=" + "/>
+                                                                                    <TextBox Text="{Binding Path=U1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text="t"/>
+                                                                                </StackPanel>
+                                                                                <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                                                                                    <TextBlock Text="y = "/>
+                                                                                    <TextBox Text="{Binding Path=X2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" + "/>
+                                                                                    <TextBox Text="{Binding Path=U2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text="t"/>
+                                                                                </StackPanel>
+                                                                            </Grid>
+                                                                        </DataTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.TwoPoints}">
+                                                                <Setter Property="ContentTemplate">
+                                                                    <Setter.Value>
+                                                                        <DataTemplate>
+                                                                            <TextBox Text="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                        </DataTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.ThreePoints}">
+                                                                <Setter Property="ContentTemplate">
+                                                                    <Setter.Value>
+                                                                        <DataTemplate>
+                                                                            <TextBox Text="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                        </DataTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ContentControl.Style>
+                                            </ContentControl>
+
+                                            <!--<TextBox Grid.Column="1"
                                                      Padding="10"
                                                      FontSize="16">
                                                 <TextBox.Style>
@@ -98,13 +204,19 @@
                                                             <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.ConicSection}">
                                                                 <Setter Property="Text" Value="ahojjjj"/>
                                                             </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.Line}">
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.LineParametric}">
+                                                                <Setter Property="Text" Value="nazdaaaaar"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.TwoPoints}">
+                                                                <Setter Property="Text" Value="nazdaaaaar"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.ThreePoints}">
                                                                 <Setter Property="Text" Value="nazdaaaaar"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </TextBox.Style>
-                                            </TextBox>
+                                            </TextBox>-->
                                                 <Button Grid.Column="2" Content="X" Padding="7" Click="RemoveItem_ButtonClick"/>
                                             <Border Tag="GraphableChange" Visibility="Collapsed"
                                                     Grid.Row="1" Grid.ColumnSpan="3"
@@ -113,7 +225,9 @@
                                                 <StackPanel>
                                                     <Button Content="Funkce" Tag="Function" Click="ReplaceItem_ButtonClick"/>
                                                     <Button Content="Kuželosečka" Tag="ConicSection" Click="ReplaceItem_ButtonClick"/>
-                                                    <Button Content="Přímka" Tag="Line" Click="ReplaceItem_ButtonClick"/>
+                                                    <Button Content="Parametrická přímka" Tag="LineParametric" Click="ReplaceItem_ButtonClick"/>
+                                                    <Button Content="Dva body" Tag="TwoPoints" Click="ReplaceItem_ButtonClick"/>
+                                                    <Button Content="Tři body" Tag="ThreePoints" Click="ReplaceItem_ButtonClick"/>
                                                 </StackPanel>
                                             </Border>
                                         </Grid>

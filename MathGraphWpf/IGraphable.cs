@@ -12,7 +12,7 @@ namespace MathStudioWpf
     {
         bool IsGraphable { get; set; }
         GraphableType Type { get; }
-        IEnumerable<IEnumerable<Point>> GetGraphPoints(double xmax, double ymax, double xmin, double ymin, double dx);
+        IEnumerable<IEnumerable<Point>> GetGraphPoints();
         Brush Color { get; set; }
     }
 }

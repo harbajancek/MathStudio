@@ -8,6 +8,8 @@ namespace MathStudioWpf
     {
         Function,
         ConicSection,
-        Line
+        LineParametric,
+        TwoPoints,
+        ThreePoints
     }
 }
