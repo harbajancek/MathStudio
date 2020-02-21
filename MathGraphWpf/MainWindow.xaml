@@ -52,20 +52,19 @@
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="200"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="2" Background="White" VerticalAlignment="Bottom">
                 <Button Style="{StaticResource DefaultButton}" Margin="5" Content="Vymazat vše" Click="Clear_ButtonClick"/>
-                <Button Style="{StaticResource DefaultButton}" Margin="5" Content="Obnovit mřížku" Click="ResetMatrix_ButtonClick"/>
+                <Button Style="{StaticResource DefaultButton}" Margin="5" Content="Vycentrovat mřížku" Click="ResetMatrix_ButtonClick"/>
                 <StackPanel Margin="5">
-                    <CheckBox FontSize="15" x:Name="PICheckbox" Content="π x-mřížka" Checked="PICheckbox_Checked" Unchecked="PICheckbox_Checked"/>
-                    <TextBlock x:Name="WMaxsMins"/>
+                    <CheckBox FontSize="15" x:Name="PICheckbox" Content="𝜋 x-mřížka" Checked="PICheckbox_Checked" Unchecked="PICheckbox_Checked"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="0">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch">
                     <StackPanel>
                         <ItemsControl HorizontalAlignment="Stretch" x:Name="ExpressionsList" ItemsSource="{Binding Graphables}">
                             <ItemsControl.ItemTemplate>
@@ -81,7 +80,29 @@
                                                 <RowDefinition Height="auto"/>
                                                 <RowDefinition Height="auto"/>
                                             </Grid.RowDefinitions>
-                                            <Button Content="grr" Click="ToggleChangeVisibility_ButtonClick"/>
+                                            <Button Click="ToggleChangeVisibility_ButtonClick" FontSize="20" Padding="8">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:GraphableType.Function}">
+                                                                <Setter Property="Content" Value="𝒇" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:GraphableType.ConicSection}">
+                                                                <Setter Property="Content" Value="⬭" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:GraphableType.LineParametric}">
+                                                                <Setter Property="Content" Value="╱" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:GraphableType.TwoPoints}">
+                                                                <Setter Property="Content" Value="••" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Type}" Value="{x:Static local:GraphableType.ThreePoints}">
+                                                                <Setter Property="Content" Value="⛬" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
 
                                             <ContentControl Grid.Column="1" HorizontalAlignment="Stretch" MinWidth="200">
                                                 <ContentControl.Style>
@@ -100,12 +121,11 @@
                                                                                 <TextBlock Grid.Column="0"
                                                                                            Text="y = "
                                                                                            Padding="10"
-                                                                                           FontSize="16"/> 
+                                                                                           FontSize="16"/>
                                                                                 <TextBox Grid.Column="1"
                                                                                          Padding="10"
                                                                                          FontSize="16"
-                                                                                         Text="{Binding Path=ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                                         />
+                                                                                         Text="{Binding Path=ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                                                             </Grid>
                                                                         </DataTemplate>
                                                                     </Setter.Value>
@@ -117,10 +137,208 @@
                                                                     <Setter.Value>
                                                                         <DataTemplate>
                                                                             <Grid Background="WhiteSmoke" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                                                <TextBox Grid.Column="1"
-                                                                                         Padding="10"
-                                                                                         FontSize="16"
-                                                                                         Text="Not there yet" />
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                </Grid.RowDefinitions>
+                                                                                <Grid.Resources>
+                                                                                    <Style TargetType="TextBlock">
+                                                                                        <Setter Property="Padding" Value="10"/>
+                                                                                        <Setter Property="FontSize" Value="16"/>
+                                                                                    </Style>
+                                                                                    <Style TargetType="TextBox">
+                                                                                        <Setter Property="Padding" Value="10"/>
+                                                                                        <Setter Property="FontSize" Value="16"/>
+                                                                                    </Style>
+                                                                                </Grid.Resources>
+                                                                                <StackPanel Orientation="Horizontal">
+                                                                                    <TextBox Text="{Binding Path=A, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" * x^2 + "/>
+                                                                                    <TextBox Text="{Binding Path=B, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" * y^2 + "/>
+                                                                                    <TextBox Text="{Binding Path=C, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" * x + "/>
+                                                                                    <TextBox Text="{Binding Path=D, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" * y + "/>
+                                                                                    <TextBox Text="{Binding Path=E, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" = 0"/>
+                                                                                </StackPanel>
+                                                                                <ContentControl Grid.Row="1">
+                                                                                    <ContentControl.Style>
+                                                                                        <Style TargetType="ContentControl">
+                                                                                            <Style.Triggers>
+                                                                                                <DataTrigger Binding="{Binding ConicSectionType}" Value="{x:Static local:ConicSectionType.Circle}">
+                                                                                                    <Setter Property="Content" Value="{Binding}"/>
+                                                                                                    <Setter Property="ContentTemplate">
+                                                                                                        <Setter.Value>
+                                                                                                            <DataTemplate>
+                                                                                                                <StackPanel>
+                                                                                                                    <TextBlock Text="Typ: Kružnice"/>
+                                                                                                                    <StackPanel Orientation="Horizontal">
+                                                                                                                        <TextBlock Text="Střed: ["/>
+                                                                                                                        <TextBlock Text="{Binding Path=Center.X}"/>
+                                                                                                                        <TextBlock Text=" ; "/>
+                                                                                                                        <TextBlock Text="{Binding Path=Center.Y}"/>
+                                                                                                                        <TextBlock Text=" ]"/>
+                                                                                                                    </StackPanel>
+                                                                                                                </StackPanel>
+                                                                                                            </DataTemplate>
+                                                                                                        </Setter.Value>
+                                                                                                    </Setter>
+                                                                                                </DataTrigger>
+                                                                                                <DataTrigger Binding="{Binding ConicSectionType}" Value="{x:Static local:ConicSectionType.Ellipse}">
+                                                                                                    <Setter Property="Content" Value="{Binding}"/>
+                                                                                                    <Setter Property="ContentTemplate">
+                                                                                                        <Setter.Value>
+                                                                                                            <DataTemplate>
+                                                                                                                <StackPanel>
+                                                                                                                    <TextBlock Text="Typ: Elipsa"/>
+                                                                                                                    <StackPanel Orientation="Horizontal">
+                                                                                                                        <TextBlock Text="Střed: ["/>
+                                                                                                                        <TextBlock Text="{Binding Path=Center.X}"/>
+                                                                                                                        <TextBlock Text=" ; "/>
+                                                                                                                        <TextBlock Text="{Binding Path=Center.Y}"/>
+                                                                                                                        <TextBlock Text=" ]"/>
+                                                                                                                    </StackPanel>
+                                                                                                                    <StackPanel Orientation="Horizontal">
+                                                                                                                        <TextBlock Text="Excentricita: "/>
+                                                                                                                        <TextBlock Text="{Binding Path=Eccentricity}"/>
+                                                                                                                    </StackPanel>
+                                                                                                                    <Grid>
+                                                                                                                        <Grid.ColumnDefinitions>
+                                                                                                                            <ColumnDefinition Width="auto"/>
+                                                                                                                            <ColumnDefinition Width="auto"/>
+                                                                                                                        </Grid.ColumnDefinitions>
+                                                                                                                        <Grid.RowDefinitions>
+                                                                                                                            <RowDefinition Height="auto"/>
+                                                                                                                            <RowDefinition Height="auto"/>
+                                                                                                                        </Grid.RowDefinitions>
+                                                                                                                        <TextBlock Text="Ohniska: "/>
+                                                                                                                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                                                                                                            <TextBlock Text="["/>
+                                                                                                                            <TextBlock Text="{Binding Path=Focus1.X}"/>
+                                                                                                                            <TextBlock Text=" ; "/>
+                                                                                                                            <TextBlock Text="{Binding Path=Focus1.Y}"/>
+                                                                                                                            <TextBlock Text=" ]"/>
+                                                                                                                        </StackPanel>
+                                                                                                                        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+                                                                                                                            <TextBlock Text="["/>
+                                                                                                                            <TextBlock Text="{Binding Path=Focus2.X}"/>
+                                                                                                                            <TextBlock Text=" ; "/>
+                                                                                                                            <TextBlock Text="{Binding Path=Focus2.Y}"/>
+                                                                                                                            <TextBlock Text=" ]"/>
+                                                                                                                        </StackPanel>
+                                                                                                                    </Grid>
+                                                                                                                </StackPanel>
+                                                                                                            </DataTemplate>
+                                                                                                        </Setter.Value>
+                                                                                                    </Setter>
+                                                                                                </DataTrigger>
+                                                                                                <DataTrigger Binding="{Binding ConicSectionType}" Value="{x:Static local:ConicSectionType.Hyperbola}">
+                                                                                                    <Setter Property="Content" Value="{Binding}"/>
+                                                                                                    <Setter Property="ContentTemplate">
+                                                                                                        <Setter.Value>
+                                                                                                            <DataTemplate>
+                                                                                                                <StackPanel>
+                                                                                                                    <TextBlock Text="Typ: Hyperbola"/>
+                                                                                                                    <StackPanel Orientation="Horizontal">
+                                                                                                                        <TextBlock Text="Střed: ["/>
+                                                                                                                        <TextBlock Text="{Binding Path=Center.X}"/>
+                                                                                                                        <TextBlock Text=" ; "/>
+                                                                                                                        <TextBlock Text="{Binding Path=Center.Y}"/>
+                                                                                                                        <TextBlock Text=" ]"/>
+                                                                                                                    </StackPanel>
+                                                                                                                    <StackPanel Orientation="Horizontal">
+                                                                                                                        <TextBlock Text="Excentricita: "/>
+                                                                                                                        <TextBlock Text="{Binding Path=Eccentricity}"/>
+                                                                                                                    </StackPanel>
+                                                                                                                    <Grid>
+                                                                                                                        <Grid.ColumnDefinitions>
+                                                                                                                            <ColumnDefinition Width="auto"/>
+                                                                                                                            <ColumnDefinition Width="auto"/>
+                                                                                                                        </Grid.ColumnDefinitions>
+                                                                                                                        <Grid.RowDefinitions>
+                                                                                                                            <RowDefinition Height="auto"/>
+                                                                                                                            <RowDefinition Height="auto"/>
+                                                                                                                        </Grid.RowDefinitions>
+                                                                                                                        <TextBlock Text="Ohniska: "/>
+                                                                                                                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                                                                                                                            <TextBlock Text="["/>
+                                                                                                                            <TextBlock Text="{Binding Path=Focus1.X}"/>
+                                                                                                                            <TextBlock Text=" ; "/>
+                                                                                                                            <TextBlock Text="{Binding Path=Focus1.Y}"/>
+                                                                                                                            <TextBlock Text=" ]"/>
+                                                                                                                        </StackPanel>
+                                                                                                                        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
+                                                                                                                            <TextBlock Text="["/>
+                                                                                                                            <TextBlock Text="{Binding Path=Focus2.X}"/>
+                                                                                                                            <TextBlock Text=" ; "/>
+                                                                                                                            <TextBlock Text="{Binding Path=Focus2.Y}"/>
+                                                                                                                            <TextBlock Text=" ]"/>
+                                                                                                                        </StackPanel>
+                                                                                                                    </Grid>
+                                                                                                                </StackPanel>
+                                                                                                            </DataTemplate>
+                                                                                                        </Setter.Value>
+                                                                                                    </Setter>
+                                                                                                </DataTrigger>
+                                                                                                <DataTrigger Binding="{Binding ConicSectionType}" Value="{x:Static local:ConicSectionType.Parabola}">
+                                                                                                    <Setter Property="Content" Value="{Binding}"/>
+                                                                                                    <Setter Property="ContentTemplate">
+                                                                                                        <Setter.Value>
+                                                                                                            <DataTemplate>
+                                                                                                                <StackPanel>
+                                                                                                                    <TextBlock Text="Typ: Parabola"/>
+                                                                                                                    <StackPanel Orientation="Horizontal">
+                                                                                                                        <TextBlock Text="Vrchol: ["/>
+                                                                                                                        <TextBlock Text="{Binding Path=Vertex.X}"/>
+                                                                                                                        <TextBlock Text=" ; "/>
+                                                                                                                        <TextBlock Text="{Binding Path=Vertex.Y}"/>
+                                                                                                                        <TextBlock Text=" ]"/>
+                                                                                                                    </StackPanel>
+                                                                                                                    <StackPanel Orientation="Horizontal">
+                                                                                                                        <TextBlock Text="Ohnisko: "/>
+                                                                                                                        <TextBlock Text="["/>
+                                                                                                                        <TextBlock Text="{Binding Path=Focus.X}"/>
+                                                                                                                        <TextBlock Text=" ; "/>
+                                                                                                                        <TextBlock Text="{Binding Path=Focus.Y}"/>
+                                                                                                                        <TextBlock Text=" ]"/>
+                                                                                                                    </StackPanel>
+                                                                                                                </StackPanel>
+                                                                                                            </DataTemplate>
+                                                                                                        </Setter.Value>
+                                                                                                    </Setter>
+                                                                                                </DataTrigger>
+                                                                                            </Style.Triggers>
+                                                                                        </Style>
+                                                                                    </ContentControl.Style>
+                                                                                </ContentControl>
+                                                                                <!--<StackPanel Grid.Row="1">
+                                                                                    <TextBlock>
+                                                                                        <TextBlock.Style>
+                                                                                            <Style TargetType="TextBlock">
+                                                                                                <Style.Triggers>
+                                                                                                    <DataTrigger Binding="{Binding Path=ConicSectionType, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static local:ConicSectionType.Circle}">
+                                                                                                        <Setter Property="Text" Value="Kružnice"/>
+                                                                                                    </DataTrigger>
+                                                                                                    <DataTrigger Binding="{Binding Path=ConicSectionType, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static local:ConicSectionType.Ellipse}">
+                                                                                                        <Setter Property="Text" Value="Elipsa"/>
+                                                                                                    </DataTrigger>
+                                                                                                    <DataTrigger Binding="{Binding Path=ConicSectionType, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static local:ConicSectionType.Hyperbola}">
+                                                                                                        <Setter Property="Text" Value="Hyperbola"/>
+                                                                                                    </DataTrigger>
+                                                                                                    <DataTrigger Binding="{Binding Path=ConicSectionType, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static local:ConicSectionType.Parabola}">
+                                                                                                        <Setter Property="Text" Value="Parabola"/>
+                                                                                                    </DataTrigger>
+                                                                                                    <DataTrigger Binding="{Binding Path=ConicSectionType, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static local:ConicSectionType.None}">
+                                                                                                        <Setter Property="Text" Value=""/>
+                                                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                                                    </DataTrigger>
+                                                                                                </Style.Triggers>
+                                                                                            </Style>
+                                                                                        </TextBlock.Style>
+                                                                                    </TextBlock>
+                                                                                </StackPanel>-->
                                                                             </Grid>
                                                                         </DataTemplate>
                                                                     </Setter.Value>
@@ -170,19 +388,95 @@
                                                                 </Setter>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.TwoPoints}">
+                                                                <Setter Property="Content" Value="{Binding}"/>
                                                                 <Setter Property="ContentTemplate">
                                                                     <Setter.Value>
                                                                         <DataTemplate>
-                                                                            <TextBox Text="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                            <Grid Background="WhiteSmoke" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="auto"/>
+                                                                                    <ColumnDefinition Width="auto"/>
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                </Grid.RowDefinitions>
+                                                                                <Grid.Resources>
+                                                                                    <Style TargetType="TextBlock">
+                                                                                        <Setter Property="Padding" Value="10"/>
+                                                                                        <Setter Property="FontSize" Value="16"/>
+                                                                                    </Style>
+                                                                                    <Style TargetType="TextBox">
+                                                                                        <Setter Property="Padding" Value="10"/>
+                                                                                        <Setter Property="FontSize" Value="16"/>
+                                                                                    </Style>
+                                                                                </Grid.Resources>
+                                                                                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+                                                                                    <TextBlock Text="["/>
+                                                                                    <TextBox Text="{Binding Path=X1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                                    <TextBlock Text=" ; "/>
+                                                                                    <TextBox Text="{Binding Path=Y1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text="]"/>
+                                                                                </StackPanel>
+                                                                                <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                                                                                    <TextBlock Text="["/>
+                                                                                    <TextBox Text="{Binding Path=X2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" ; "/>
+                                                                                    <TextBox Text="{Binding Path=Y2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text="]"/>
+                                                                                </StackPanel>
+                                                                            </Grid>
                                                                         </DataTemplate>
                                                                     </Setter.Value>
                                                                 </Setter>
                                                             </DataTrigger>
                                                             <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.ThreePoints}">
+                                                                <Setter Property="Content" Value="{Binding}"/>
                                                                 <Setter Property="ContentTemplate">
                                                                     <Setter.Value>
                                                                         <DataTemplate>
-                                                                            <TextBox Text="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                            <Grid Background="WhiteSmoke" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                                                <Grid.ColumnDefinitions>
+                                                                                    <ColumnDefinition Width="auto"/>
+                                                                                    <ColumnDefinition Width="auto"/>
+                                                                                </Grid.ColumnDefinitions>
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                    <RowDefinition Height="auto"/>
+                                                                                </Grid.RowDefinitions>
+                                                                                <Grid.Resources>
+                                                                                    <Style TargetType="TextBlock">
+                                                                                        <Setter Property="Padding" Value="10"/>
+                                                                                        <Setter Property="FontSize" Value="16"/>
+                                                                                    </Style>
+                                                                                    <Style TargetType="TextBox">
+                                                                                        <Setter Property="Padding" Value="10"/>
+                                                                                        <Setter Property="FontSize" Value="16"/>
+                                                                                    </Style>
+                                                                                </Grid.Resources>
+                                                                                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+                                                                                    <TextBlock Text="["/>
+                                                                                    <TextBox Text="{Binding Path=X1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                                    <TextBlock Text=" ; "/>
+                                                                                    <TextBox Text="{Binding Path=Y1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text="]"/>
+                                                                                </StackPanel>
+                                                                                <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                                                                                    <TextBlock Text="["/>
+                                                                                    <TextBox Text="{Binding Path=X2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" ; "/>
+                                                                                    <TextBox Text="{Binding Path=Y2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text="]"/>
+                                                                                </StackPanel>
+                                                                                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                                                                                    <TextBlock Text="["/>
+                                                                                    <TextBox Text="{Binding Path=X3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text=" ; "/>
+                                                                                    <TextBox Text="{Binding Path=Y3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                                    <TextBlock Text="]"/>
+                                                                                </StackPanel>
+                                                                            </Grid>
                                                                         </DataTemplate>
                                                                     </Setter.Value>
                                                                 </Setter>
@@ -191,38 +485,19 @@
                                                     </Style>
                                                 </ContentControl.Style>
                                             </ContentControl>
-
-                                            <!--<TextBox Grid.Column="1"
-                                                     Padding="10"
-                                                     FontSize="16">
-                                                <TextBox.Style>
-                                                    <Style TargetType="TextBox">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.Function}">
-                                                                <Setter Property="Text" Value="{Binding ExpressionString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.ConicSection}">
-                                                                <Setter Property="Text" Value="ahojjjj"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.LineParametric}">
-                                                                <Setter Property="Text" Value="nazdaaaaar"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.TwoPoints}">
-                                                                <Setter Property="Text" Value="nazdaaaaar"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Path=Type}" Value="{x:Static local:GraphableType.ThreePoints}">
-                                                                <Setter Property="Text" Value="nazdaaaaar"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBox.Style>
-                                            </TextBox>-->
-                                                <Button Grid.Column="2" Content="X" Padding="7" Click="RemoveItem_ButtonClick"/>
+                                            <Button Grid.Column="2" Content="✖" Padding="7" Click="RemoveItem_ButtonClick"/>
                                             <Border Tag="GraphableChange" Visibility="Collapsed"
                                                     Grid.Row="1" Grid.ColumnSpan="3"
-                                                    Margin="3" Padding="5"
+                                                    Margin="3" Padding="5" HorizontalAlignment="Left"
                                                     BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Background="WhiteSmoke">
                                                 <StackPanel>
+                                                    <StackPanel.Resources>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource DefaultButton}">
+                                                            <Setter Property="Padding" Value="5"/>
+                                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                                            <Setter Property="Border.CornerRadius" Value="0"/>
+                                                        </Style>
+                                                    </StackPanel.Resources>
                                                     <Button Content="Funkce" Tag="Function" Click="ReplaceItem_ButtonClick"/>
                                                     <Button Content="Kuželosečka" Tag="ConicSection" Click="ReplaceItem_ButtonClick"/>
                                                     <Button Content="Parametrická přímka" Tag="LineParametric" Click="ReplaceItem_ButtonClick"/>
@@ -239,7 +514,7 @@
                         </ItemsControl>
                         <Button HorizontalAlignment="Left" Width="50" Height="50" Style="{StaticResource DefaultButton}" Margin="5" Click="Add_ButtonClick">
                             <Button.Content>
-                                <TextBlock Text="+" FontSize="30" FontWeight="SemiBold" Foreground="DarkSlateGray"/>
+                                <TextBlock Text="➕" FontSize="20" Foreground="DarkSlateGray"/>
                             </Button.Content>
                         </Button>
                     </StackPanel>

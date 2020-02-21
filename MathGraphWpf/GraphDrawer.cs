@@ -84,6 +84,14 @@ namespace MathStudioWpf
 
             if (isX && IsPiEnabled)
             {
+                if (delta > 8 * Math.PI)
+                {
+                    roundedIter = 8;
+                }
+                if (delta > 6 * Math.PI)
+                {
+                    roundedIter = 6;
+                }
                 if (delta > 5 * Math.PI)
                 {
                     roundedIter = 5;
@@ -92,9 +100,13 @@ namespace MathStudioWpf
                 {
                     roundedIter = 2;
                 }
-                else
+                else if (delta > Math.PI)
                 {
                     roundedIter = 1;
+                }
+                else
+                {
+                    roundedIter = 1m/2m;
                 }
             }
             else
@@ -117,6 +129,7 @@ namespace MathStudioWpf
             if (IsPiEnabled && isX)
             {
                 iterF = new Fraction(iter, true);
+                Debug.WriteLine(iter);
             }
             else
             {
@@ -194,10 +207,22 @@ namespace MathStudioWpf
                     double blockHeight = numberBlock.LineHeight;
                     double blockWidth = numberBlock.FontSize + numberBlock.Margin.Right + numberBlock.Margin.Left;
 
-                    Point labelPoint = WtoD(new Point(
-                            (isX) ? currentValue.RealValue : (WXMin > 0) ? WXMin : (WXMax < 0) ? WXMax : 0,
-                            (isX) ? (WYMin > 0) ? WYMin : (WYMax < 0) ? WYMax : 0 : currentValue.RealValue
+                    Point labelPoint;
+
+                    if (isX)
+                    {
+                        labelPoint = WtoD(new Point(
+                            currentValue.RealValue,
+                            (WYMin > 0) ? WYMin : (WYMax < 0) ? WYMax : 0
                             ));
+                    }
+                    else
+                    {
+                        labelPoint = WtoD(new Point(
+                            (WXMin > 0) ? WXMin : (WXMax < 0) ? WXMax : 0,
+                            currentValue.RealValue
+                            ));
+                    }
 
                     // TODO pokud maxx < 0 || maxy < 0 zmenit aby numberblock sel videt
                     //labelPoint.X -= (numberBlock.FontSize + numberBlock.Margin.Left) / 2;

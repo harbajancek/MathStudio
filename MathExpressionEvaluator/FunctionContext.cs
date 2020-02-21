@@ -10,7 +10,7 @@ namespace MathExpressionEvaluator
 
         public double ResolveVariable(string name)
         {
-            if (name == "x" || name == "X")
+            if (name == "x")
             {
                 return Variable;
             }

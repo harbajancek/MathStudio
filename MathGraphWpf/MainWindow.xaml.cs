@@ -206,15 +206,15 @@ namespace MathStudioWpf
             if (e.Key == Key.Escape)
             {
                 Keyboard.ClearFocus();
-                bool boolX = Keyboard.FocusedElement is TextBox;
-                if (boolX)
-                {
-                    Console.WriteLine("true");
-                }
-                else
-                {
-                    Console.WriteLine("false");
-                }
+                //bool boolX = Keyboard.FocusedElement is TextBox;
+                //if (boolX)
+                //{
+                //    Console.WriteLine("true");
+                //}
+                //else
+                //{
+                //    Console.WriteLine("false");
+                //}
             }
         }
 
@@ -223,10 +223,6 @@ namespace MathStudioWpf
             if (window_loaded)
             {
                 GraphDrawer.DrawGraph();
-                //OffsetTextBlock.Text = $"Offset:\nX: {GraphDrawer.CoordinatesConverter.OffsetX}\nY: {GraphDrawer.CoordinatesConverter.OffsetY}";
-                //Point center = GraphDrawer.DtoW(new Point(Graph.ActualWidth/2,Graph.ActualHeight/2));
-                //CenterPoint.Text = $"Center probably:\nX: {center.X}\nY: {center.Y}";
-                WMaxsMins.Text = $"WXMax: {GraphDrawer.WXMax}\nWXmin: {GraphDrawer.WXMin}\nWYMax: {GraphDrawer.WYMax}\nWYMin: {GraphDrawer.WYMin}";
             }
         }
 
@@ -258,6 +254,11 @@ namespace MathStudioWpf
         private FrameworkElement GetParentOf(FrameworkElement element)
         {
             return (FrameworkElement)element.Parent;
+        }
+
+        private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            ((TextBox)sender).SelectAll();
         }
     }
 }

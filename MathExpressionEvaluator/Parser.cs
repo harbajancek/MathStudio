@@ -177,10 +177,10 @@ namespace MathExpressionEvaluator
         private static BinaryOperation FromToken(Token token) => token switch
         {
             Token.Add => new BinaryOperation((a, b) => a + b, OperationType.Addition),
-            Token.Subtract => new BinaryOperation((a, b) => a - b, OperationType.Addition),
-            Token.Multiply => new BinaryOperation((a, b) => a * b, OperationType.Addition),
-            Token.Divide => new BinaryOperation((a, b) => a / b, OperationType.Addition),
-            Token.Raise => new BinaryOperation((a, b) => Math.Pow(a, b), OperationType.Addition),
+            Token.Subtract => new BinaryOperation((a, b) => a - b, OperationType.Subtraction),
+            Token.Multiply => new BinaryOperation((a, b) => a * b, OperationType.Multiplication),
+            Token.Divide => new BinaryOperation((a, b) => a / b, OperationType.Division),
+            Token.Raise => new BinaryOperation((a, b) => Math.Pow(a, b), OperationType.Exponentiaton),
             _ => null
         };
     }

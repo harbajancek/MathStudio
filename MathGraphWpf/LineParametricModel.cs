@@ -10,20 +10,17 @@ namespace MathStudioWpf
 {
     class LineParametricModel : IGraphable
     {
-        private bool isGraphable;
+        private bool isGraphable = true;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private double x1;
-        private double x2;
-        private double u1;
-        private double u2;
+        private double x1 = 0;
+        private double x2 = 0;
+        private double u1 = 1;
+        private double u2 = 1;
 
         public double X1
         {
-            get
-            {
-                return x1;
-            }
+            get => x1;
             set
             {
                 x1 = value;
@@ -33,10 +30,7 @@ namespace MathStudioWpf
         }
         public double X2
         {
-            get
-            {
-                return x2;
-            }
+            get => x2;
             set
             {
                 x2 = value;
@@ -46,10 +40,7 @@ namespace MathStudioWpf
         }
         public double U1
         {
-            get
-            {
-                return u1;
-            }
+            get => u1;
             set
             {
                 u1 = value;
@@ -59,10 +50,7 @@ namespace MathStudioWpf
         }
         public double U2
         {
-            get
-            {
-                return u2;
-            }
+            get => u2;
             set
             {
                 u2 = value;
@@ -71,41 +59,20 @@ namespace MathStudioWpf
             }
         }
 
-        public Point Point
-        {
-            get
-            {
-                return new Point(X1, X2);
-            }
-        }
+        public Point Point => new Point(X1, X2);
 
-        public Point Vector
-        {
-            get
-            {
-                return new Point(U1, U2);
-            }
-        }
+        public Point Vector => new Point(U1, U2);
 
         public bool IsGraphable
         {
-            get
-            {
-                return isGraphable;
-            }
+            get => isGraphable;
             set
             {
                 isGraphable = value;
                 NotifyPropertyChanged();
             }
         }
-        public GraphableType Type
-        {
-            get
-            {
-                return GraphableType.LineParametric;
-            }
-        }
+        public GraphableType Type => GraphableType.LineParametric;
         public Brush Color { get; set; }
 
 

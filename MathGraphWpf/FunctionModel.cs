@@ -13,25 +13,16 @@ namespace MathStudioWpf
 {
     class FunctionModel : IGraphable
     {
-        public GraphableType Type
-        {
-            get
-            {
-                return GraphableType.Function;
-            }
-        }
+        public GraphableType Type => GraphableType.Function;
 
-        private string expressionString;
-        private bool isGraphable;
+        private string expressionString = "1/x";
+        private bool isGraphable = true;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string ExpressionString
         {
-            get
-            {
-                return expressionString;
-            }
+            get => expressionString;
             set
             {
                 expressionString = value;
@@ -39,13 +30,10 @@ namespace MathStudioWpf
                 NotifyPropertyChanged();
             }
         }
-        
+
         public bool IsGraphable
         {
-            get
-            {
-                return isGraphable;
-            }
+            get => isGraphable;
             set
             {
                 isGraphable = value;

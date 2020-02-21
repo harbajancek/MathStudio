@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MathStudioWpf
 {
-    public readonly struct Fraction : IComparable<Double>, IComparable<Fraction>, IEquatable<Double>, IEquatable<Fraction>, IFormattable
+    public readonly struct Fraction : IComparable<double>, IComparable<Fraction>, IEquatable<double>, IEquatable<Fraction>, IFormattable
     {
         public readonly long Numerator { get; }
         public readonly long Denominator { get; }
@@ -16,11 +16,11 @@ namespace MathStudioWpf
             {
                 if (IsPi)
                 {
-                    return Math.PI * (double)((decimal)Numerator / (decimal)Denominator);
+                    return Math.PI * (((double)Numerator) / ((double)Denominator));
                 }
                 else
                 {
-                    return (double)((decimal)Numerator / (decimal)Denominator);
+                    return (((double)Numerator) / ((double)Denominator));
                 }
             }
         }
@@ -127,7 +127,11 @@ namespace MathStudioWpf
             {
                 if (Numerator == 1)
                 {
-                    numerator = "π";
+                    numerator = "𝜋";
+                }
+                else if (Numerator == -1)
+                {
+                    numerator = "-𝜋";
                 }
                 else if (Numerator == 0)
                 {
@@ -135,7 +139,7 @@ namespace MathStudioWpf
                 }
                 else
                 {
-                    numerator = $"{(Numerator).ToString(format, formatProvider)}π";
+                    numerator = $"{(Numerator).ToString(format, formatProvider)}𝜋";
                 }
             }
             else
@@ -160,11 +164,11 @@ namespace MathStudioWpf
             {
                 if (Numerator == 1)
                 {
-                    numerator = "π";
+                    numerator = "𝜋";
                 }
                 else if (Numerator == -1)
                 {
-                    numerator = "-π";
+                    numerator = "-𝜋";
                 }
                 else if (Numerator == 0)
                 {
@@ -172,7 +176,7 @@ namespace MathStudioWpf
                 }
                 else
                 {
-                    numerator = $"{(Numerator).ToString(format)}π";
+                    numerator = $"{(Numerator).ToString(format)}𝜋";
                 }
             }
             else
@@ -188,7 +192,6 @@ namespace MathStudioWpf
             {
                 return $"{numerator}/{Denominator.ToString(format)}";
             }
-
         }
         public string ToString(IFormatProvider formatProvider)
         {
@@ -197,7 +200,11 @@ namespace MathStudioWpf
             {
                 if (Numerator == 1)
                 {
-                    numerator = "π";
+                    numerator = "𝜋";
+                }
+                else if (Numerator == -1)
+                {
+                    numerator = "-𝜋";
                 }
                 else if (Numerator == 0)
                 {
@@ -205,7 +212,7 @@ namespace MathStudioWpf
                 }
                 else
                 {
-                    numerator = $"{(Numerator).ToString(formatProvider)}π";
+                    numerator = $"{(Numerator).ToString(formatProvider)}𝜋";
                 }
             }
             else

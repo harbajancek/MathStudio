@@ -12,83 +12,64 @@ namespace MathStudioWpf
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private bool isGraphable;
-        private double x1;
-        private double y1;
-        private double x2;
-        private double y2;
+        private bool isGraphable = true;
+        private double x1 = 0;
+        private double y1 = 0;
+        private double x2 = 1;
+        private double y2 = 1;
 
         public double X1
         {
-            get
-            {
-                return x1;
-            }
+            get => x1;
             set
             {
                 x1 = value;
-                //IsGraphable = 
+                IsGraphable = ExpressionGrapher.IsTwoPointsGraphable(Point1, Point2);
                 NotifyPropertyChanged();
             }
         }
         public double Y1
         {
-            get
-            {
-                return y1;
-            }
+            get => y1;
             set
             {
                 y1 = value;
-                //IsGraphable = 
+                IsGraphable = ExpressionGrapher.IsTwoPointsGraphable(Point1, Point2);
                 NotifyPropertyChanged();
             }
         }
         public double X2
         {
-            get
-            {
-                return x2;
-            }
+            get => x2;
             set
             {
                 x2 = value;
-                //IsGraphable = 
+                IsGraphable = ExpressionGrapher.IsTwoPointsGraphable(Point1, Point2);
                 NotifyPropertyChanged();
             }
         }
         public double Y2
         {
-            get
-            {
-                return y2;
-            }
+            get => y2;
             set
             {
                 y2 = value;
-                //IsGraphable = 
+                IsGraphable = ExpressionGrapher.IsTwoPointsGraphable(Point1, Point2);
                 NotifyPropertyChanged();
             }
         }
+        public Point Point1 { get => new Point(X1, Y1); }
+        public Point Point2 { get => new Point(X2, Y2); }
         public bool IsGraphable
         {
-            get
-            {
-                return isGraphable;
-            }
+            get => isGraphable;
             set
             {
                 isGraphable = value;
                 NotifyPropertyChanged();
             }
         }
-        public GraphableType Type
-        {
-            get
-            {
-                return GraphableType.TwoPoints;
-            }
-        }
+        public GraphableType Type => GraphableType.TwoPoints;
         public Brush Color { get; set; }
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
@@ -98,9 +79,7 @@ namespace MathStudioWpf
 
         public IEnumerable<IEnumerable<Point>> GetGraphPoints()
         {
-            Point point1 = new Point(X1, Y2);
-            Point point2 = new Point(X2, Y2);
-            foreach (var item in ExpressionGrapher.GetLinePointsFromTwoPoints(point1, point2))
+            foreach (var item in ExpressionGrapher.GetLinePointsFromTwoPoints(Point1, Point2))
             {
                 yield return item;
             }
